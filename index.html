@@ -412,7 +412,7 @@
     <!-- 底部資訊 / Footer -->
     <footer class="border-t border-slate-900 bg-slate-950/40 text-slate-500 text-xs py-6">
         <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p>© 2026 全球知識探索家 (單機版). 內置雙語微型事實型常識資料庫 / Local Fast-Load Bilingual Database</p>
+            <p>© 2026 全球知識探索家 (離線穩定版). 內置雙語微型常識資料庫 / Local Fast-Load Bilingual Database</p>
             <div class="flex space-x-6">
                 <a href="#" onclick="showInfoModal(event)" class="hover:text-slate-300 transition-colors flex items-center space-x-1">
                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -658,7 +658,7 @@
             ]
         };
 
-        // 系統全局狀態管理
+        // 系統全局狀態管理 (已完整並正確初始化)
         const state = {
             currentCountry: '',
             currentCategory: '綜合隨機',
@@ -670,8 +670,19 @@
             highStreak: 0,
             conqueredCountries: {}, // 格式範例：{ '台灣': { total: 1, correct: 1 } }
             soundEnabled: true,
-            consecutiveQuestionIndices: {} // 用來追蹤內置題目不重複出現
+            consecutiveQuestionIndices: {} // 追蹤題目索引 (修復關鍵：此處必須完整初始化！)
         };
+
+        // 雙語載入提示輪播句 (純本地載入)
+        const loadingHints = [
+            "正在翻閱大英百科全書與地方誌... / Browsing encyclopedias and local archives...",
+            "正在向當地的村長長老打聽鄉野秘辛... / Gathering deep historical anecdotes from village elders...",
+            "正在核對聯合國教科文組織世界遺產文獻... / Verification with UNESCO World Heritage lists...",
+            "正在當地的傳統美食街尋找獨特食譜... / Inspecting regional ingredients and ancient cookbooks...",
+            "正在用衛星定位量測地理極點... / Pinpointing geographical landmarks and coordinates...",
+            "正在利用 Google 搜尋查證該國最近的歷史與文獻紀錄... / Verification using Google Search facts..."
+        ];
+        let loadingInterval;
 
         // 頁面初次載入
         document.addEventListener('DOMContentLoaded', () => {
@@ -680,7 +691,7 @@
             updateStatsUI();
         });
 
-        // 聲音控制（利用 Web Audio API 原生音訊合成器發聲，不需要任何外部 .mp3 資源）
+        // 聲音控制（利用 Web Audio API 原生音訊合成器發聲）
         function toggleSound() {
             state.soundEnabled = !state.soundEnabled;
             const container = document.getElementById('sound-icon-container');
@@ -711,7 +722,6 @@
                 gain.connect(ctx.destination);
 
                 if (type === 'correct') {
-                    // 答對時的和弦琶音
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
                     osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
@@ -721,7 +731,6 @@
                     osc.start();
                     osc.stop(ctx.currentTime + 0.4);
                 } else if (type === 'wrong') {
-                    // 遺憾失敗音
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(196.00, ctx.currentTime); // G3
                     osc.frequency.exponentialRampToValueAtTime(110.00, ctx.currentTime + 0.4);
@@ -730,7 +739,6 @@
                     osc.start();
                     osc.stop(ctx.currentTime + 0.4);
                 } else if (type === 'click') {
-                    // 精緻按鈕點擊反饋音
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(850, ctx.currentTime);
                     gain.gain.setValueAtTime(0.04, ctx.currentTime);
@@ -790,26 +798,37 @@
         }
 
         // 航行載入模擬與本機資料庫提取
-        async function startTrivia(countryName, defaultEmoji = '🏳️') {
+        function startTrivia(countryName, defaultEmoji = '🏳️') {
             state.currentCountry = countryName;
             state.currentCategory = document.getElementById('category-select').value;
             
             switchView('view-loading');
             document.getElementById('loading-target').innerText = countryName;
             
-            // 模擬航行時間 (1.2 秒) 以增加探險體驗
+            // 快速載入動畫輪播
             let hintIdx = 0;
             document.getElementById('loading-hint').innerText = loadingHints[0];
             loadingInterval = setInterval(() => {
                 hintIdx = (hintIdx + 1) % loadingHints.length;
                 document.getElementById('loading-hint').innerText = loadingHints[hintIdx];
-            }, 500);
+            }, 550);
 
+            // 1.2 秒模擬後提取題目 (使用防禦型 Try-Catch 保護)
             setTimeout(() => {
-                clearInterval(loadingInterval);
-                const trivia = getLocalTrivia(countryName);
-                state.currentQuestion = trivia;
-                displayGame(defaultEmoji);
+                try {
+                    clearInterval(loadingInterval);
+                    const trivia = getLocalTrivia(countryName);
+                    if (!trivia) {
+                        throw new Error("無法取得該國家的問答數據 / Failed to retrieve trivia data.");
+                    }
+                    state.currentQuestion = trivia;
+                    displayGame(defaultEmoji);
+                } catch (err) {
+                    clearInterval(loadingInterval);
+                    console.error("載入出錯：", err);
+                    switchView('view-home');
+                    showModal("載入錯誤 / Loading Error", "擷取該國家的問答題目時發生異常，已為您自動返回主頁。 / An unexpected error occurred. Returned to home screen.<br><br>錯誤詳情 / Details: " + err.message);
+                }
             }, 1200);
         }
 
@@ -817,7 +836,7 @@
         function getLocalTrivia(country) {
             const cleanKey = country.trim().toLowerCase();
             
-            // 先嘗試精確與模糊匹配內置資料庫
+            // 嘗試與資料庫鍵值匹配
             let matchedKey = null;
             for (const key of Object.keys(localDatabase)) {
                 if (cleanKey.includes(key.toLowerCase()) || key.toLowerCase().includes(cleanKey)) {
@@ -826,10 +845,14 @@
                 }
             }
 
+            // 安全防禦：如果 state.consecutiveQuestionIndices 因任何原因遺失，重新補齊
+            if (!state.consecutiveQuestionIndices) {
+                state.consecutiveQuestionIndices = {};
+            }
+
             if (matchedKey && localDatabase[matchedKey]) {
                 const questionPool = localDatabase[matchedKey];
                 
-                // 追蹤題目索引，防止連續重複
                 if (state.consecutiveQuestionIndices[matchedKey] === undefined) {
                     state.consecutiveQuestionIndices[matchedKey] = 0;
                 }
@@ -838,7 +861,7 @@
                 return questionPool[idx];
             }
 
-            // 啟動萬用 Fallback Geometrical 演算法 (萬無一失且極其科學)
+            // 自適應 Fallback 引擎 (確保 correctIndex 完整回傳)
             const fallbackTemplates = [
                 {
                     question: `每個國家的地理位置都有其獨特性。如果你從「\${country}」沿著地球球體經度直線一直向南前進（不拐彎），你最終必定會抵達地球的哪一個寒冷邊疆？ / Every country's geography is unique. If you travel directly South along the longitude line from '\${country}', which cold frontier of the Earth will you eventually reach?`,
@@ -866,12 +889,12 @@
                 }
             ];
 
-            // 根據國家名字隨機挑選 Fallback 題並客製化填入名字
             const selectedTemplate = fallbackTemplates[country.length % fallbackTemplates.length];
             
             return {
                 question: selectedTemplate.question.replace(/\${country}/g, country),
                 options: selectedTemplate.options,
+                correctIndex: selectedTemplate.correctIndex, // 確實對應 correctIndex
                 explanation: selectedTemplate.explanation.replace(/\${country}/g, country),
                 source: selectedTemplate.source
             };
@@ -1020,17 +1043,23 @@
             switchView('view-home');
         }
 
+        // 強健的切換視圖機制 (保證清除所有非目標 display，防止重複顯現)
         function switchView(viewId) {
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-loading').classList.add('hidden');
-            document.getElementById('view-game').classList.add('hidden');
-            document.getElementById('view-result').classList.add('hidden');
+            const views = ['view-home', 'view-loading', 'view-game', 'view-result'];
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }
+            });
 
-            document.getElementById(viewId).classList.remove('hidden');
-            if (viewId === 'view-loading') {
-                document.getElementById('view-loading').classList.add('flex');
-            } else {
-                document.getElementById('view-loading').classList.remove('flex');
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.remove('hidden');
+                if (viewId === 'view-loading') {
+                    target.classList.add('flex');
+                }
             }
         }
 
@@ -1051,7 +1080,7 @@
                 conqueredList.forEach(country => {
                     const stats = state.conqueredCountries[country];
                     const tag = document.createElement('span');
-                    tag.className = "inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs text-slate-300";
+                    tag.className = "inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs text-slate-300 animate-fade-in";
                     tag.innerHTML = `
                         <span class="font-bold text-slate-100">${country}</span>
                         <span class="text-slate-500">(${stats.correct}/${stats.total} 答對 / Correct)</span>
@@ -1071,13 +1100,13 @@
                     highStreak: state.highStreak,
                     conqueredCountries: state.conqueredCountries
                 };
-                localStorage.setItem('trivia_explorer_offline_progress', JSON.stringify(gameProgress));
+                localStorage.setItem('trivia_explorer_offline_progress_v3', JSON.stringify(gameProgress));
             } catch (e) {}
         }
 
         function loadProgress() {
             try {
-                const saved = localStorage.getItem('trivia_explorer_offline_progress');
+                const saved = localStorage.getItem('trivia_explorer_offline_progress_v3');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     state.score = parsed.score || 0;
@@ -1201,3 +1230,4 @@
     </script>
 </body>
 </html>
+
