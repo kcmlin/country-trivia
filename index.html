@@ -1,0 +1,1212 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全球知識探索家：互動國家問答 / Global Trivia Explorer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0b0f19;
+        }
+        /* 玻璃擬態質感 */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        /* 漸變按鈕 */
+        .gradient-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .gradient-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.4);
+        }
+        .gradient-btn:active {
+            transform: translateY(0px);
+        }
+        /* 旋轉動畫 */
+        @keyframes spin-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 15s linear infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden relative">
+
+    <!-- 全螢幕互動特效畫布 / Canvas Confetti Effect -->
+    <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+    <!-- 頂部導覽列 / Header -->
+    <header class="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md sticky top-0 z-45">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <!-- 標題 Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+                    <!-- Compass Icon (SVG) -->
+                    <svg class="w-6 h-6 animate-spin-slow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-md md:text-xl font-black bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex flex-col md:flex-row md:items-center">
+                        <span>全球知識探索家</span>
+                        <span class="text-xs font-normal md:ml-2 opacity-80 text-indigo-300">Global Trivia Explorer</span>
+                    </h1>
+                    <p class="text-[10px] md:text-xs text-slate-400">AI 即時生成 • 趣味國家問答 / AI-Powered Live Trivia</p>
+                </div>
+            </div>
+            
+            <!-- 控制選項與狀態 -->
+            <div class="flex items-center space-x-3">
+                <!-- 連勝紀錄 -->
+                <div class="flex items-center space-x-1 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full text-amber-400 text-sm">
+                    <!-- Zap Icon (SVG) -->
+                    <svg class="w-4 h-4 fill-amber-400 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <span class="font-bold text-[10px] md:text-xs whitespace-nowrap">連勝 / Streak: <span id="stat-streak">0</span></span>
+                </div>
+                <!-- 設定按鈕 -->
+                <button onclick="toggleSettingsModal()" class="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-lg transition-colors" title="設定 / Settings">
+                    <!-- Settings Gear Icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </button>
+                <!-- 音效控制 -->
+                <button onclick="toggleSound()" class="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-lg transition-colors">
+                    <!-- Volume Up / Mute Icon (Dynamically Toggled) -->
+                    <span id="sound-icon-container">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主內容區 / Main Content -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 md:py-10 flex flex-col justify-center">
+        
+        <!-- 狀態 1: 首頁 / Home View -->
+        <section id="view-home" class="space-y-8 animate-fade-in">
+            <!-- 歡迎標語 -->
+            <div class="text-center space-y-3 max-w-3xl mx-auto">
+                <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full text-xs font-semibold uppercase tracking-wider">
+                    測試你的世界觀 / Test Your Worldview
+                </span>
+                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+                    挑選一個國家，開啟冒險！
+                    <span class="text-xl md:text-3xl block mt-2 font-bold text-indigo-300">Pick a Country, Start the Adventure!</span>
+                </h2>
+                <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+                    系統將結合最新實時 Google 搜尋與 Gemini AI，為你量身打造專屬的深度科普問答。你能挑戰到第幾關？
+                    <span class="block mt-1 text-xs md:text-sm text-slate-500">Our system integrates real-time Google Search with Gemini AI to design custom trivia just for you. How many levels can you conquer?</span>
+                </p>
+            </div>
+
+            <!-- 兩欄配置：自訂國家 vs 熱門推薦 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 左側：自訂搜尋 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="glass-card p-6 md:p-8 rounded-3xl space-y-6">
+                        <h3 class="text-lg font-bold flex flex-col space-y-1 text-indigo-400">
+                            <span class="flex items-center space-x-2">
+                                <!-- Search SVG -->
+                                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                <span>1. 輸入或搜尋任何國家</span>
+                            </span>
+                            <span class="text-xs font-normal text-slate-400">1. Enter or Search Any Country</span>
+                        </h3>
+                        
+                        <div class="relative">
+                            <input type="text" id="country-input" 
+                                class="w-full bg-slate-950/80 border-2 border-slate-800 focus:border-indigo-500 rounded-2xl py-4 pl-12 pr-4 text-slate-100 placeholder-slate-500 outline-none transition-all text-lg"
+                                placeholder="例如：法國、埃及、不丹、阿根廷... / e.g., France, Egypt, Bhutan..."
+                                onkeypress="handleSearchKeyPress(event)"
+                            >
+                            <!-- Globe SVG -->
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5A1.5 1.5 0 0018 10.5V8.5a.5.5 0 00-.5-.5h-1a1 1 0 01-1-1V5a2 2 0 00-2-2 2 2 0 00-2 2v1.5a.5.5 0 01-.5.5h-2a.5.5 0 00-.5.5v1.5a.5.5 0 01-.5.5h-1.5A2.5 2.5 0 003 10.5v1.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </span>
+                        </div>
+
+                        <!-- 快捷設定：類別與難度 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- 類別選擇 -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-slate-300 flex flex-col">
+                                    <span class="flex items-center space-x-1.5">
+                                        <!-- Tag SVG -->
+                                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span>問答主題類別</span>
+                                    </span>
+                                    <span class="text-xs font-normal text-slate-500">Trivia Category</span>
+                                </label>
+                                <select id="category-select" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-3 px-4 text-slate-200 outline-none cursor-pointer">
+                                    <option value="綜合隨機">🎲 綜合隨機 / Random Mix</option>
+                                    <option value="歷史與傳奇">🏛️ 歷史與傳奇 / History & Legends</option>
+                                    <option value="地理與自然生態">🏔️ 地理與自然生態 / Geography & Nature</option>
+                                    <option value="傳統文化與藝術">🎨 傳統文化與藝術 / Culture & Arts</option>
+                                    <option value="在地美食與烹飪">🍜 在地美食與烹飪 / Food & Cuisine</option>
+                                    <option value="獵奇與冷知識">💡 獵奇與冷知識 / Trivia & Fun Facts</option>
+                                </select>
+                            </div>
+
+                            <!-- 難易度選擇 -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-slate-300 flex flex-col">
+                                    <span class="flex items-center space-x-1.5">
+                                        <!-- Bar Chart SVG -->
+                                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/>
+                                        </svg>
+                                        <span>挑戰難易度</span>
+                                    </span>
+                                    <span class="text-xs font-normal text-slate-500">Difficulty Level</span>
+                                </label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="setDifficulty('簡單')" id="diff-easy" class="diff-btn py-3 px-2 rounded-xl text-xs font-bold border transition-all bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                        簡單 / Easy
+                                    </button>
+                                    <button onclick="setDifficulty('中等')" id="diff-medium" class="diff-btn py-3 px-2 rounded-xl text-xs font-bold border transition-all bg-indigo-600/20 border-indigo-500/50 text-indigo-300">
+                                        中等 / Normal
+                                    </button>
+                                    <button onclick="setDifficulty('困難')" id="diff-hard" class="diff-btn py-3 px-2 rounded-xl text-xs font-bold border transition-all bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                        困難 / Hard
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 開始按鈕 -->
+                        <button onclick="startCustomTrivia()" class="w-full py-4 rounded-2xl font-black text-lg tracking-wider gradient-btn text-white flex flex-col items-center justify-center space-y-0.5">
+                            <span class="flex items-center space-x-2">
+                                <span>開始知識探索</span>
+                                <!-- Arrow Right SVG -->
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                            <span class="text-xs font-normal opacity-85">Start Exploring Trivia</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 右側：熱門推薦國家 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold flex flex-col text-indigo-400 px-1">
+                        <span class="flex items-center space-x-2">
+                            <!-- Sparkles SVG -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            </svg>
+                            <span>探索熱門推薦</span>
+                        </span>
+                        <span class="text-xs font-normal text-slate-400">Explore Recommended Countries</span>
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                        <button onclick="selectPopularCountry('台灣', '🇹🇼')" class="glass-card hover:border-indigo-500/50 p-4 rounded-2xl text-left flex items-center space-x-4 transition-all group w-full">
+                            <span class="text-3xl filter drop-shadow">🇹🇼</span>
+                            <div>
+                                <h4 class="font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">台灣 (Taiwan)</h4>
+                                <p class="text-[11px] text-slate-400 leading-snug">美食天堂與科技矽島 / Food Heaven & Tech Island</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectPopularCountry('瑞士', '🇨🇭')" class="glass-card hover:border-indigo-500/50 p-4 rounded-2xl text-left flex items-center space-x-4 transition-all group w-full">
+                            <span class="text-3xl filter drop-shadow">🇨🇭</span>
+                            <div>
+                                <h4 class="font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">瑞士 (Switzerland)</h4>
+                                <p class="text-[11px] text-slate-400 leading-snug">壯麗阿爾卑斯與鐘錶王國 / Alpine Wonders & Watchmaking</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectPopularCountry('義大利', '🇮🇹')" class="glass-card hover:border-indigo-500/50 p-4 rounded-2xl text-left flex items-center space-x-4 transition-all group w-full">
+                            <span class="text-3xl filter drop-shadow">🇮🇹</span>
+                            <div>
+                                <h4 class="font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">義大利 (Italy)</h4>
+                                <p class="text-[11px] text-slate-400 leading-snug">歷史文藝復興與時尚美食 / Renaissance & Cuisine</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectPopularCountry('墨西哥', '🇲🇽')" class="glass-card hover:border-indigo-500/50 p-4 rounded-2xl text-left flex items-center space-x-4 transition-all group w-full">
+                            <span class="text-3xl filter drop-shadow">🇲🇽</span>
+                            <div>
+                                <h4 class="font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">墨西哥 (Mexico)</h4>
+                                <p class="text-[11px] text-slate-400 leading-snug">神秘馬雅文明與熱情塔可 / Mayan Mysteries & Spicy Tacos</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectPopularCountry('希臘', '🇬🇷')" class="glass-card hover:border-indigo-500/50 p-4 rounded-2xl text-left flex items-center space-x-4 transition-all group w-full">
+                            <span class="text-3xl filter drop-shadow">🇬🇷</span>
+                            <div>
+                                <h4 class="font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">希臘 (Greece)</h4>
+                                <p class="text-[11px] text-slate-400 leading-snug">藍白愛琴海與眾神神話 / Aegean Romance & Ancient Myths</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 足跡記錄板 / Footprint Section -->
+            <div id="conquered-section" class="glass-card p-6 rounded-3xl space-y-4 hidden">
+                <h3 class="text-md font-semibold text-slate-300 flex flex-col">
+                    <span class="flex items-center space-x-2">
+                        <!-- Map Pin SVG -->
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>你的國家探索足跡 (<span id="footprint-count">0</span>)</span>
+                    </span>
+                    <span class="text-xs font-normal text-slate-500">Your Conquered Countries</span>
+                </h3>
+                <div id="footprint-container" class="flex flex-wrap gap-2">
+                    <!-- 動態加入國家標籤 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 狀態 2: 載入中畫面 / Loading View -->
+        <section id="view-loading" class="hidden flex-col items-center justify-center space-y-8 py-16">
+            <div class="relative flex items-center justify-center">
+                <div class="absolute w-28 h-28 border-4 border-dashed border-indigo-500 rounded-full animate-spin-slow"></div>
+                <div class="absolute w-24 h-24 border-4 border-indigo-400/20 rounded-full"></div>
+                <div class="w-20 h-20 bg-indigo-600/10 text-indigo-400 rounded-full flex items-center justify-center border border-indigo-500/30">
+                    <svg class="w-10 h-10 animate-pulse" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5A1.5 1.5 0 0018 10.5V8.5a.5.5 0 00-.5-.5h-1a1 1 0 01-1-1V5a2 2 0 00-2-2 2 2 0 00-2 2v1.5a.5.5 0 01-.5.5h-2a.5.5 0 00-.5.5v1.5a.5.5 0 01-.5.5h-1.5A2.5 2.5 0 003 10.5v1.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="text-center space-y-3">
+                <h3 class="text-2xl font-bold text-slate-100">
+                    正在搭機前往 <span id="loading-target" class="text-indigo-400">...</span>
+                    <span class="block text-sm font-normal text-slate-400 mt-1">Boarding flight to destination...</span>
+                </h3>
+                <p id="loading-hint" class="text-slate-400 text-sm max-w-lg mx-auto leading-relaxed">
+                    正在翻閱大英百科全書、向當地長老請教...
+                </p>
+            </div>
+        </section>
+
+        <!-- 狀態 3: 答題畫面 / Game View -->
+        <section id="view-game" class="hidden max-w-3xl mx-auto w-full space-y-6 animate-fade-in">
+            <div class="flex items-center justify-between">
+                <button onclick="goHome()" class="flex items-center space-x-1.5 text-sm text-slate-400 hover:text-slate-200 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    <span>返回主頁 / Home</span>
+                </button>
+                <div class="flex items-center space-x-2 animate-fade-in">
+                    <span id="badge-category" class="px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-full text-xs font-medium">文化</span>
+                    <span id="badge-difficulty" class="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-full text-xs font-medium">中等</span>
+                </div>
+            </div>
+
+            <!-- 題目卡片 -->
+            <div class="glass-card rounded-3xl p-6 md:p-8 space-y-8 relative overflow-hidden">
+                <div id="game-watermark" class="absolute -right-10 -bottom-10 text-[10rem] opacity-5 select-none pointer-events-none">🗺️</div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-2.5">
+                        <span id="game-flag" class="text-3xl">🏳️</span>
+                        <h3 id="game-country-title" class="text-xl md:text-2xl font-black text-indigo-400">日本</h3>
+                    </div>
+                    <p id="game-question" class="text-lg md:text-xl font-bold text-slate-100 leading-relaxed break-words">
+                        載入問題中...
+                    </p>
+                </div>
+
+                <!-- 四個選項 -->
+                <div class="grid grid-cols-1 gap-4" id="options-container">
+                    <!-- 動態生成 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 狀態 4: 答題結果回饋 / Result View -->
+        <section id="view-result" class="hidden max-w-3xl mx-auto w-full space-y-6 animate-fade-in">
+            <!-- 結果卡 -->
+            <div id="result-status-card" class="rounded-3xl p-8 text-center space-y-4 border transition-all">
+                <div class="inline-flex p-4 rounded-full" id="result-icon-bg">
+                    <span id="result-svg-container"></span>
+                </div>
+                <h3 id="result-title" class="text-2xl md:text-3xl font-extrabold flex flex-col items-center">答對了！</h3>
+                <p id="result-subtitle" class="text-slate-400 text-sm">解析中...</p>
+            </div>
+
+            <!-- 解析與出處 -->
+            <div class="glass-card rounded-3xl p-6 md:p-8 space-y-6">
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-widest flex flex-col space-y-0.5">
+                        <span class="flex items-center space-x-1.5">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            <span>深度知識解析</span>
+                        </span>
+                        <span class="text-[10px] font-normal text-slate-500">Deep Knowledge Explanation</span>
+                    </h4>
+                    <p id="result-explanation" class="text-slate-200 leading-relaxed text-sm md:text-base break-words">
+                        解析載入中...
+                    </p>
+                </div>
+
+                <hr class="border-slate-800">
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-widest flex flex-col space-y-0.5">
+                        <span class="flex items-center space-x-1.5">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            <span>答案可信來源與出處</span>
+                        </span>
+                        <span class="text-[10px] font-normal text-slate-500">Verified Knowledge Sources</span>
+                    </h4>
+                    <div id="result-source-container" class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 text-sm text-slate-300">
+                        <!-- 動態填充 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 動作按鈕 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button onclick="restartSameCountry()" class="py-4 rounded-2xl font-bold bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-100 flex flex-col items-center justify-center space-y-0.5 transition-all">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89"/>
+                        </svg>
+                        <span>挑戰同個國家另一題</span>
+                    </span>
+                    <span class="text-xs font-normal text-slate-400">Try Another Question</span>
+                </button>
+                <button onclick="goHome()" class="py-4 rounded-2xl font-bold gradient-btn text-white flex flex-col items-center justify-center space-y-0.5">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        <span>探索其他國家</span>
+                    </span>
+                    <span class="text-xs font-normal opacity-90">Explore Other Countries</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 底部資訊 / Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950/40 text-slate-500 text-xs py-6">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p>© 2026 全球知識探索家. 結合 Google 搜尋與 Gemini AI 實時事實校正 / Powered by Gemini & Search Grounding</p>
+            <div class="flex space-x-6">
+                <a href="#" onclick="showInfoModal(event)" class="hover:text-slate-300 transition-colors flex items-center space-x-1">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>運作原理說明 / How It Works</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 本地 API 設定彈窗 / Settings & API Key Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-md w-full rounded-3xl p-6 border border-slate-800 space-y-6">
+            <div class="flex items-center space-x-3 text-indigo-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+                <div class="flex flex-col">
+                    <h3 class="text-xl font-bold text-slate-100">設定面板</h3>
+                    <span class="text-xs text-indigo-300">Developer & API Key Settings</span>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-300 flex flex-col">
+                        <span>Gemini API 金鑰 (選填)</span>
+                        <span class="text-xs font-normal text-slate-500">Your Gemini API Key (Optional)</span>
+                    </label>
+                    <input type="password" id="api-key-input" 
+                        class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-3 px-4 text-slate-200 text-sm outline-none transition-all"
+                        placeholder="AI_zaSy..."
+                    >
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        本應用程式優先使用 Canvas 執行環境中內建的金鑰。若你想直接在自架 GitHub Pages 網站執行，請貼上你個人的 Gemini API Key。金鑰會安全儲存在你的本機瀏覽器 localStorage 中，絕不外流。
+                        <span class="block mt-1">If hosted on your own GitHub Pages, enter your personal Gemini API Key above. It is stored securely in your browser's local storage.</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex space-x-3">
+                <button onclick="saveSettings()" class="flex-grow py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white text-sm transition-all text-center">
+                    儲存變更 / Save Changes
+                </button>
+                <button onclick="toggleSettingsModal()" class="py-3 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm transition-all">
+                    取消 / Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 訊息提示彈窗 / Alert Modal -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-md w-full rounded-3xl p-6 border border-slate-800 space-y-6">
+            <div class="flex items-center space-x-3 text-amber-400">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div class="flex flex-col">
+                    <h3 class="text-xl font-bold text-slate-100" id="modal-title">提醒</h3>
+                    <span class="text-xs text-amber-500">System Notification</span>
+                </div>
+            </div>
+            <p id="modal-desc" class="text-slate-400 text-sm leading-relaxed">
+                說明
+            </p>
+            <button onclick="closeModal()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold transition-all text-slate-200">
+                我知道了 / OK
+            </button>
+        </div>
+    </div>
+
+    <!-- 運作原理說明彈窗 / Info Modal -->
+    <div id="info-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-lg w-full rounded-3xl p-6 border border-slate-800 space-y-6 overflow-y-auto max-h-[90vh]">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 text-indigo-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="flex flex-col">
+                        <h3 class="text-xl font-bold text-slate-100">全球知識探索家運作原理</h3>
+                        <span class="text-xs text-indigo-300">How Global Trivia Explorer Works</span>
+                    </div>
+                </div>
+                <button onclick="closeInfoModal()" class="text-slate-500 hover:text-slate-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
+                <p>
+                    本問答系統並非使用固定的靜態資料庫，而是透過 **Gemini AI 系統**，當使用者選擇國家與難度後，即時發動 **Google 搜尋與實時事實查核 (Search Grounding)** 技術。
+                    <span class="block text-xs mt-1 text-slate-500 font-medium">This trivia system is generated on-the-fly. It leverages Google Search Grounding with Gemini AI to generate factual questions rather than relying on a static database.</span>
+                </p>
+                <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-2">
+                    <div class="flex flex-col text-indigo-300 font-bold">
+                        <span class="flex items-center space-x-1.5">
+                            <svg class="w-4 h-4 text-indigo-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <span>實時搜尋技術 (Search Grounding)</span>
+                        </span>
+                    </div>
+                    <p class="text-xs leading-relaxed">
+                        當你要求探索某個國家時，AI 會主動搜尋有關該國家的經典人文、地理紀錄等可信報導與官方文獻，確保產出的考題具有高度真實性，避免 AI 常見的胡言亂語（幻覺）。
+                        <span class="block mt-1 text-slate-500">When exploring, the AI live searches reliable articles and official database resources to verify facts, ensuring questions are highly accurate.</span>
+                    </p>
+                </div>
+                <p>
+                    AI 在產生考題的同時，會精準抽取出處（網頁、政府網站、知名大百科或學術文獻），並將其結構化呈現，讓你在遊玩的過程中不僅得到樂趣，還能點擊網址吸收真正具考據的學術與地理常識！
+                    <span class="block text-xs mt-1 text-slate-500 font-medium">AI extracts actual sources and serves genuine web links, so you can expand your knowledge by browsing verified databases directly.</span>
+                </p>
+            </div>
+            <button onclick="closeInfoModal()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold transition-all text-white text-sm">
+                立即開始探索 / Start Exploration Now
+            </button>
+        </div>
+    </div>
+
+    <!-- 邏輯處理 JS / Core Engine -->
+    <script>
+        // 核心 API 密鑰（Canvas 執行環境會在執行時自動注入此變數）
+        const apiKey = "";
+
+        // 系統全局狀態管理
+        const state = {
+            currentCountry: '',
+            currentCategory: '綜合隨機',
+            currentDifficulty: '中等',
+            currentQuestion: null,
+            userAnswer: null,
+            score: 0,
+            streak: 0,
+            highStreak: 0,
+            conqueredCountries: {}, // 格式範例：{ '台灣': { total: 1, correct: 1 } }
+            soundEnabled: true
+        };
+
+        // 雙語載入提示輪播句 (完全本機硬編碼，零外部載入開銷)
+        const loadingHints = [
+            "正在翻閱大英百科全書與地方誌... / Browsing encyclopedias and local archives...",
+            "正在向當地的長老打聽鄉野秘辛... / Gathering deep historical anecdotes from village elders...",
+            "正在核對聯合國教科文組織世界遺產文獻... / Verification with UNESCO World Heritage lists...",
+            "正在當地的傳統美食街尋找獨特食譜... / Inspecting regional ingredients and ancient cookbooks...",
+            "正在用衛星定位量測地理極點... / Pinpointing geographical landmarks and coordinates...",
+            "正在利用 Google 搜尋查證該國最近的歷史與文獻紀錄... / Verification using Google Search facts..."
+        ];
+        let loadingInterval;
+
+        // 頁面初次載入
+        document.addEventListener('DOMContentLoaded', () => {
+            setDifficulty('中等');
+            loadProgress();
+            updateStatsUI();
+            loadSavedApiKey();
+        });
+
+        // 本地儲存的自訂 API 金鑰讀取/寫入（極為便利於自建 GitHub 部署時使用）
+        function loadSavedApiKey() {
+            try {
+                const savedKey = localStorage.getItem('user_gemini_api_key');
+                if (savedKey) {
+                    document.getElementById('api-key-input').value = savedKey;
+                }
+            } catch (e) {
+                console.warn('LocalStorage blocked in this browser sandbox.');
+            }
+        }
+
+        function getActiveApiKey() {
+            // 優先權 1: 平台執行環境直接注入的 apiKey
+            if (typeof apiKey !== 'undefined' && apiKey && apiKey.trim() !== "") {
+                return apiKey.trim();
+            }
+            // 優先權 2: 使用者在設定面板中自行儲存於本地 LocalStorage 的 key
+            try {
+                const savedKey = localStorage.getItem('user_gemini_api_key');
+                if (savedKey && savedKey.trim() !== "") {
+                    return savedKey.trim();
+                }
+            } catch (e) {}
+            return "";
+        }
+
+        // 開關設定面板
+        function toggleSettingsModal() {
+            playSynthSound('click');
+            const modal = document.getElementById('settings-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            playSynthSound('click');
+            const keyInput = document.getElementById('api-key-input').value.trim();
+            try {
+                localStorage.setItem('user_gemini_api_key', keyInput);
+                showToast("設定已成功儲存！ / Settings Saved!");
+                toggleSettingsModal();
+            } catch (e) {
+                showModal("錯誤 / Error", "無法寫入瀏覽器本地儲存區。 / Local storage access denied.");
+            }
+        }
+
+        // 聲音控制（利用 Web Audio API 原生音訊合成器發聲，不需要任何 .mp3 或外部音訊檔）
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const container = document.getElementById('sound-icon-container');
+            if (state.soundEnabled) {
+                container.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                    </svg>
+                `;
+                showToast("音效已開啟 / Audio Enabled");
+            } else {
+                container.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zm10.414-6l4 4m0-4l-4 4"/>
+                    </svg>
+                `;
+                showToast("音效已靜音 / Audio Muted");
+            }
+        }
+
+        function playSynthSound(type) {
+            if (!state.soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    // 答對時的愉悅上升琶音
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    // 遺憾失敗音
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(196.00, ctx.currentTime); // G3
+                    osc.frequency.exponentialRampToValueAtTime(110.00, ctx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'click') {
+                    // 精緻點擊反饋音
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(850, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                }
+            } catch (e) {
+                console.warn('Web Audio Context blocked or not supported.');
+            }
+        }
+
+        // 難度選擇
+        function setDifficulty(level) {
+            playSynthSound('click');
+            state.currentDifficulty = level;
+            
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.className = "diff-btn py-3 px-2 rounded-xl text-xs font-bold border transition-all bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            });
+
+            let activeBtn;
+            if (level === '簡單') {
+                activeBtn = document.getElementById('diff-easy');
+                activeBtn.className = "diff-btn py-3 px-2 rounded-xl text-xs font-bold border transition-all bg-emerald-600/20 border-emerald-500/50 text-emerald-300";
+            } else if (level === '中等') {
+                activeBtn = document.getElementById('diff-medium');
+                activeBtn.className = "diff-btn py-3 px-2 rounded-xl text-xs font-bold border transition-all bg-indigo-600/20 border-indigo-500/50 text-indigo-300";
+            } else if (level === '困難') {
+                activeBtn = document.getElementById('diff-hard');
+                activeBtn.className = "diff-btn py-3 px-2 rounded-xl text-xs font-bold border transition-all bg-rose-600/20 border-rose-500/50 text-rose-300";
+            }
+        }
+
+        // 點擊熱門推薦國家
+        function selectPopularCountry(countryName, emoji) {
+            playSynthSound('click');
+            document.getElementById('country-input').value = countryName;
+            startTrivia(countryName, emoji);
+        }
+
+        // 點擊自訂搜尋
+        function startCustomTrivia() {
+            playSynthSound('click');
+            const countryInput = document.getElementById('country-input').value.trim();
+            if (!countryInput) {
+                showModal("提示 / Note", "請先輸入你想要探索的國家名稱！ / Please enter the country you wish to explore first!");
+                return;
+            }
+            startTrivia(countryInput, '🏳️');
+        }
+
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                startCustomTrivia();
+            }
+        }
+
+        // 切換檢視並呼叫 Gemini 2.5 API
+        async function startTrivia(countryName, defaultEmoji = '🏳️') {
+            const activeKey = getActiveApiKey();
+            if (!activeKey) {
+                showModal("需要設定 API 金鑰 / API Key Required", "偵測到本機未設定 API Key。若你是在自建的 GitHub Pages 站點上執行，請點擊右上角齒輪設定圖示並填寫你的 Gemini API 金鑰（可至 Google AI Studio 尋找），以啟用 AI 動態生成功能。 <br><br> If hosted on GitHub Pages, click the settings gear on top right to provide your Gemini API Key.");
+                return;
+            }
+
+            state.currentCountry = countryName;
+            state.currentCategory = document.getElementById('category-select').value;
+            
+            switchView('view-loading');
+            document.getElementById('loading-target').innerText = countryName;
+            
+            let hintIdx = 0;
+            document.getElementById('loading-hint').innerText = loadingHints[0];
+            loadingInterval = setInterval(() => {
+                hintIdx = (hintIdx + 1) % loadingHints.length;
+                document.getElementById('loading-hint').innerText = loadingHints[hintIdx];
+            }, 1800);
+
+            try {
+                const triviaData = await fetchTriviaFromGemini(activeKey, countryName, state.currentCategory, state.currentDifficulty);
+                clearInterval(loadingInterval);
+                
+                if (triviaData) {
+                    state.currentQuestion = triviaData;
+                    displayGame(defaultEmoji);
+                } else {
+                    throw new Error("無法解析問答數據 / Failed to parse database response");
+                }
+            } catch (error) {
+                clearInterval(loadingInterval);
+                console.error("API Error Details:", error);
+                switchView('view-home');
+                showModal("系統連線錯誤 / Connection Failed", "無法成功為該國家取得趣味問答。這通常是因為金鑰設定錯誤、網路逾時、或該國家的輸入字詞不正確。請稍後重試，或點選其他推薦的熱門國家！ <br><br> API request failed. Please check your key configuration or try another country name!");
+            }
+        }
+
+        // 重新玩同一國家
+        function restartSameCountry() {
+            playSynthSound('click');
+            startTrivia(state.currentCountry);
+        }
+
+        // 動態取得 API 問答數據（支援 5 次指數退避，完全符合強健性標準）
+        async function fetchTriviaFromGemini(activeKey, country, category, difficulty) {
+            const systemPrompt = `你是世界地理、歷史與文化專家。請針對使用者指定的「國家」，產生一題趣味且高度正確的四選一選擇題問答（Trivia）。
+請嚴格遵循以下規範：
+1. 題目必須與該國家有高度關聯，考點須為真實的歷史、地理、自然生態、傳統文化或經典美食。
+2. 難易度必須符合使用者的設定（簡單、中等、困難）。
+3. 類別必須盡量符合使用者的設定。
+4. 提供四個選項，且有且僅有一個絕對正確的答案。
+5. 所有的欄位內容（包含 question, options, explanation, source）都必須以中英雙語呈現！
+6. 格式必須嚴格遵循「中文在前，英文在後」，中間使用斜線「 / 」分開隔開。例如：
+   - question: "台灣最高的山峰是哪一座？ / What is the highest peak in Taiwan?"
+   - options: ["玉山 / Yushan", "雪山 / Xueshan", "合歡山 / Hehuanshan", "阿里山 / Alishan"]
+   - explanation: "玉山海拔3,952公尺，是台灣第一高峰，也是東亞地區的最高峰。 / Yushan, standing at 3,952 meters, is the highest peak in Taiwan and the tallest in East Asia."
+   - source: "中華民國內政部地理資料 / Ministry of the Interior Geographic Data"
+
+特別說明：請使用內建的 Google Search Grounding 搜尋引擎確認該題目事實無誤，並在 source 欄位中提供明確且具體的中文在前、英文在後出處。
+回答必須為純 JSON 格式，且符合指定的 schema。`;
+
+            const userQuery = `國家: ${country}\n類別: ${category}\n難易度: ${difficulty}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                tools: [{ google_search: {} }], // 啟用即時搜尋與事實查證
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            question: { type: "STRING" },
+                            options: { 
+                                type: "ARRAY", 
+                                items: { type: "STRING" } 
+                            },
+                            correctIndex: { type: "INTEGER" },
+                            explanation: { type: "STRING" },
+                            source: { type: "STRING" }
+                        },
+                        required: ["question", "options", "correctIndex", "explanation", "source"]
+                    }
+                }
+            };
+
+            let delay = 1000;
+            for (let attempt = 0; attempt < 5; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    const parsedData = JSON.parse(rawText);
+
+                    // 收集 Google 搜尋生成的真實連結資料 (Grounding Attributions)
+                    const attributions = result.candidates?.[0]?.groundingMetadata?.groundingAttributions || [];
+                    parsedData.groundingAttributions = attributions.map(attr => ({
+                        uri: attr.web?.uri,
+                        title: attr.web?.title
+                    }));
+
+                    return parsedData;
+
+                } catch (err) {
+                    if (attempt === 4) throw err;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; // 指數加倍
+                }
+            }
+        }
+
+        // 顯示題目
+        function displayGame(emoji) {
+            switchView('view-game');
+            state.userAnswer = null;
+
+            document.getElementById('badge-category').innerText = state.currentCategory;
+            document.getElementById('badge-difficulty').innerText = '難度 / Diff: ' + state.currentDifficulty;
+            document.getElementById('game-country-title').innerText = state.currentCountry;
+            document.getElementById('game-flag').innerText = emoji;
+            document.getElementById('game-question').innerText = state.currentQuestion.question;
+
+            // 水印改為國家的第一個字母
+            document.getElementById('game-watermark').innerText = state.currentCountry.charAt(0);
+
+            // 渲染選項按鈕
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            state.currentQuestion.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800 hover:border-indigo-500/40 transition-all flex items-center justify-between group";
+                btn.onclick = () => submitAnswer(index);
+                
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3 pr-2 w-full">
+                        <span class="w-8 h-8 rounded-lg bg-slate-950 flex items-center justify-center font-bold text-sm text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors shrink-0">
+                            ${String.fromCharCode(65 + index)}
+                        </span>
+                        <span class="text-slate-200 text-sm md:text-base font-medium break-words leading-snug">${optionText}</span>
+                    </div>
+                    <!-- Right Arrow SVG -->
+                    <svg class="w-5 h-5 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // 提交作答處理
+        function submitAnswer(selectedIndex) {
+            if (state.userAnswer !== null) return;
+            state.userAnswer = selectedIndex;
+
+            const correctIdx = state.currentQuestion.correctIndex;
+            const isCorrect = (selectedIndex === correctIdx);
+
+            if (!state.conqueredCountries[state.currentCountry]) {
+                state.conqueredCountries[state.currentCountry] = { total: 0, correct: 0 };
+            }
+            state.conqueredCountries[state.currentCountry].total++;
+
+            if (isCorrect) {
+                playSynthSound('correct');
+                state.score += 10;
+                state.streak++;
+                if (state.streak > state.highStreak) {
+                    state.highStreak = state.streak;
+                }
+                state.conqueredCountries[state.currentCountry].correct++;
+                triggerConfetti();
+                
+                setupResultCard(true);
+            } else {
+                playSynthSound('wrong');
+                state.streak = 0;
+                setupResultCard(false);
+            }
+
+            saveProgress();
+            updateStatsUI();
+
+            setTimeout(() => {
+                showResultView(isCorrect);
+            }, 600);
+        }
+
+        // 優雅渲染結果視窗元件
+        function setupResultCard(isCorrect) {
+            const statusCard = document.getElementById('result-status-card');
+            const iconBg = document.getElementById('result-icon-bg');
+            const iconContainer = document.getElementById('result-svg-container');
+            const title = document.getElementById('result-title');
+            const subtitle = document.getElementById('result-subtitle');
+
+            if (isCorrect) {
+                statusCard.className = "rounded-3xl p-8 text-center space-y-4 border border-emerald-500/30 bg-emerald-950/20 animate-fade-in";
+                iconBg.className = "inline-flex p-4 rounded-full bg-emerald-500/20 text-emerald-400";
+                iconContainer.innerHTML = `
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                `;
+                title.innerHTML = "<span>答對了！太厲害了！</span><span class='block text-lg font-bold opacity-80 mt-1'>Correct! Outstanding!</span>";
+                title.className = "text-2xl md:text-3xl font-extrabold text-emerald-400 flex flex-col items-center";
+                subtitle.innerHTML = "你對世界各國的奇聞軼事瞭若指掌！積分 +10 / Your travel scope is stunning! +10 Points.";
+            } else {
+                statusCard.className = "rounded-3xl p-8 text-center space-y-4 border border-rose-500/30 bg-rose-950/20 animate-fade-in";
+                iconBg.className = "inline-flex p-4 rounded-full bg-rose-500/20 text-rose-400";
+                iconContainer.innerHTML = `
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                `;
+                title.innerHTML = "<span>答錯了！沒關係！</span><span class='block text-lg font-bold opacity-80 mt-1'>Incorrect! Keep going!</span>";
+                title.className = "text-2xl md:text-3xl font-extrabold text-rose-400 flex flex-col items-center";
+                
+                const correctChar = String.fromCharCode(65 + state.currentQuestion.correctIndex);
+                const correctText = state.currentQuestion.options[state.currentQuestion.correctIndex];
+                subtitle.innerHTML = `正確答案是 / Correct answer: <span class="text-amber-400 font-bold">${correctChar}. ${correctText}</span>。再接再厲！`;
+            }
+        }
+
+        // 詳細雙語解答與事實連結呈現
+        function showResultView(isCorrect) {
+            switchView('view-result');
+            
+            document.getElementById('result-explanation').innerText = state.currentQuestion.explanation;
+
+            const sourceContainer = document.getElementById('result-source-container');
+            sourceContainer.innerHTML = '';
+
+            // 基本文本出處
+            const baseSourceDiv = document.createElement('div');
+            baseSourceDiv.className = "font-medium flex items-start space-x-2";
+            baseSourceDiv.innerHTML = `
+                <svg class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="break-words">歷史與學術事實依據 / Verified Facts: ${state.currentQuestion.source}</span>
+            `;
+            sourceContainer.appendChild(baseSourceDiv);
+
+            // 若 Google Search Grounding 提供具體的線上參考網頁，一併顯示
+            const attributions = state.currentQuestion.groundingAttributions || [];
+            if (attributions.length > 0) {
+                const linksTitle = document.createElement('div');
+                linksTitle.className = "mt-4 text-xs font-semibold text-slate-400 uppercase tracking-wider";
+                linksTitle.innerText = "可信查證網頁來源 / Verified Web Sources:";
+                sourceContainer.appendChild(linksTitle);
+
+                const linksList = document.createElement('div');
+                linksList.className = "mt-2 space-y-2 flex flex-col";
+                
+                attributions.forEach(attr => {
+                    if (attr.uri && attr.title) {
+                        const link = document.createElement('a');
+                        link.href = attr.uri;
+                        link.target = "_blank";
+                        link.className = "text-indigo-400 hover:text-indigo-300 hover:underline flex items-center space-x-1.5 text-xs truncate max-w-full";
+                        link.innerHTML = `
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                            <span>${attr.title}</span>
+                        `;
+                        linksList.appendChild(link);
+                    }
+                });
+                sourceContainer.appendChild(linksList);
+            }
+        }
+
+        function goHome() {
+            playSynthSound('click');
+            switchView('view-home');
+        }
+
+        function switchView(viewId) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-loading').classList.add('hidden');
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('view-result').classList.add('hidden');
+
+            document.getElementById(viewId).classList.remove('hidden');
+            if (viewId === 'view-loading') {
+                document.getElementById('view-loading').classList.add('flex');
+            } else {
+                document.getElementById('view-loading').classList.remove('flex');
+            }
+        }
+
+        // 更新與儲存足跡板與連勝指標
+        function updateStatsUI() {
+            document.getElementById('stat-streak').innerText = state.streak;
+
+            const conqueredList = Object.keys(state.conqueredCountries);
+            const footprintSection = document.getElementById('conquered-section');
+            const footprintContainer = document.getElementById('footprint-container');
+            const footprintCount = document.getElementById('footprint-count');
+
+            if (conqueredList.length > 0) {
+                footprintSection.classList.remove('hidden');
+                footprintCount.innerText = conqueredList.length;
+                footprintContainer.innerHTML = '';
+
+                conqueredList.forEach(country => {
+                    const stats = state.conqueredCountries[country];
+                    const tag = document.createElement('span');
+                    tag.className = "inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs text-slate-300";
+                    tag.innerHTML = `
+                        <span class="font-bold text-slate-100">${country}</span>
+                        <span class="text-slate-500">(${stats.correct}/${stats.total} 答對 / Correct)</span>
+                    `;
+                    footprintContainer.appendChild(tag);
+                });
+            } else {
+                footprintSection.classList.add('hidden');
+            }
+        }
+
+        function saveProgress() {
+            try {
+                const gameProgress = {
+                    score: state.score,
+                    streak: state.streak,
+                    highStreak: state.highStreak,
+                    conqueredCountries: state.conqueredCountries
+                };
+                localStorage.setItem('trivia_explorer_progress_v2', JSON.stringify(gameProgress));
+            } catch (e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('trivia_explorer_progress_v2');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state.score = parsed.score || 0;
+                    state.streak = parsed.streak || 0;
+                    state.highStreak = parsed.highStreak || 0;
+                    state.conqueredCountries = parsed.conqueredCountries || {};
+                }
+            } catch (e) {}
+        }
+
+        // ----------------- 自定義 2D 畫布 Canvas Confetti 灑花特效 -----------------
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+        let confettiActive = false;
+        let confettiArray = [];
+        const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ec4899'];
+
+        function resizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfettiCanvas);
+        resizeConfettiCanvas();
+
+        class ConfettiParticle {
+            constructor() {
+                this.x = Math.random() * confettiCanvas.width;
+                this.y = Math.random() * -confettiCanvas.height - 20;
+                this.size = Math.random() * 8 + 6;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 4 + 4;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 4 - 2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        function triggerConfetti() {
+            confettiArray = [];
+            for (let i = 0; i < 90; i++) {
+                confettiArray.push(new ConfettiParticle());
+            }
+            if (!confettiActive) {
+                confettiActive = true;
+                animateConfetti();
+            }
+        }
+
+        function animateConfetti() {
+            if (!confettiActive) return;
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            
+            let alive = false;
+            confettiArray.forEach(p => {
+                p.update();
+                p.draw();
+                if (p.y < confettiCanvas.height) {
+                    alive = true;
+                }
+            });
+
+            if (alive) {
+                requestAnimationFrame(animateConfetti);
+            } else {
+                confettiActive = false;
+                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
+        // ----------------- 自訂 Modal 模組（取代 alert / confirm) -----------------
+        function showModal(title, desc) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerHTML = desc;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            playSynthSound('click');
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function showInfoModal(e) {
+            if (e) e.preventDefault();
+            playSynthSound('click');
+            document.getElementById('info-modal').classList.remove('hidden');
+        }
+
+        function closeInfoModal() {
+            playSynthSound('click');
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-6 right-6 bg-slate-900 border border-slate-800 text-slate-100 text-xs font-semibold py-3 px-5 rounded-2xl shadow-xl z-50 animate-fade-in flex items-center space-x-2";
+            toast.innerHTML = `
+                <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                setTimeout(() => toast.remove(), 500);
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
+
+```
