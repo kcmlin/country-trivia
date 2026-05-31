@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -104,8 +103,8 @@
                     <span class="text-xl md:text-3xl block mt-2 font-bold text-indigo-300">Pick a Country, Start the Adventure!</span>
                 </h2>
                 <p class="text-slate-400 text-sm md:text-base leading-relaxed">
-                    本版本已全面對接雲端 **Gist 100 題旗艦資料庫**！所有數據實時遠端拉取，網頁載入快如閃電，且**連續 20 題絕對不重複**！
-                    <span class="block mt-1 text-xs md:text-sm text-slate-500">Connected to your external GitHub Gist (100 premium questions). All questions are fetched dynamically, keeping the web page extremely lightweight and fast!</span>
+                    本版本提供熱門推薦國家各二十題的冷知識，未來會有其他更新。
+                    <span class="block mt-1 text-xs md:text-sm text-slate-500">This version provides 20 trivia questions for each recommended country. Stay tuned for future updates!</span>
                 </p>
             </div>
 
@@ -479,7 +478,7 @@
                         </span>
                     </div>
                     <p class="text-xs leading-relaxed">
-                        如果你在輸入框中打入了任何非 Gist 內置的國家名稱，或在完全離線狀態下，系統會立刻啟動極具巧思的動態環境模擬演算法，將你輸入的國家名稱注入高度精準的物理、天文、地理真理考題（例如北極星仰角、經度直線漫遊等），實現真正意義上的「萬用自適應遊玩模式」！
+                        如果你在輸入框中打入了任何非 Gist 內置的國家名稱，系統會立刻啟動極具巧思的動態環境模擬演算法，將你輸入的國家名稱注入高度精準的物理、天文、地理真理考題（例如北極星仰角、經度直線漫遊等），實現真正意義上的「萬用自適應遊玩模式」！
                         <span class="block mt-1 text-slate-500">If you type any custom country or face network issues, our fallback engine seamlessly integrates your input into robust, mathematically and geographically true scientific puzzles.</span>
                     </p>
                 </div>
@@ -497,7 +496,7 @@
     <!-- 邏輯處理 JS / Core Engine -->
     <script>
         // 你的 GitHub Gist Raw JSON 連結
-        const GIST_URL = "https://gist.githubusercontent.com/kcmlin/98cf89084fc1cae512cb753f8d6668f2/raw/8fb51c8d916a233fb6febddccc8767853188262e/trivia_db.json";
+        const GIST_URL = "https://gist.githubusercontent.com/kcmlin/98cf89084fc1cae512cb753f8d6668f2/raw/d47422ee56b444778c6eb05b20a644f4f3766697/trivia_db.json";
 
         // 全域快取，避免重複對網路進行 fetch 請求
         let cachedDatabase = null;
@@ -1020,13 +1019,13 @@
                     highStreak: state.highStreak,
                     conqueredCountries: state.conqueredCountries
                 };
-                localStorage.setItem('trivia_explorer_online_progress_v4', JSON.stringify(gameProgress));
+                localStorage.setItem('trivia_explorer_offline_progress_v5', JSON.stringify(gameProgress));
             } catch (e) {}
         }
 
         function loadProgress() {
             try {
-                const saved = localStorage.getItem('trivia_explorer_online_progress_v4');
+                const saved = localStorage.getItem('trivia_explorer_offline_progress_v5');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     state.score = parsed.score || 0;
@@ -1109,7 +1108,7 @@
             }
         }
 
-        // ----------------- 自訂 Modal 模組（取代 alert / confirm) -----------------
+        // ----------------- 自定義 Modal 模組（取代 alert / confirm) -----------------
         function showModal(title, desc) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-desc').innerHTML = desc;
