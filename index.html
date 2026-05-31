@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -61,7 +62,7 @@
                         <span>全球知識探索家</span>
                         <span class="text-xs font-normal md:ml-2 opacity-80 text-indigo-300">Global Trivia Explorer</span>
                     </h1>
-                    <p class="text-[10px] md:text-xs text-slate-400">離線旗艦版 • 趣味國家問答 / Complete Offline Trivia Edition</p>
+                    <p class="text-[10px] md:text-xs text-slate-400">雲端題庫版 • 趣味國家問答 / Complete Cloud-Sourced Trivia Edition</p>
                 </div>
             </div>
             
@@ -103,8 +104,8 @@
                     <span class="text-xl md:text-3xl block mt-2 font-bold text-indigo-300">Pick a Country, Start the Adventure!</span>
                 </h2>
                 <p class="text-slate-400 text-sm md:text-base leading-relaxed">
-                    本旗艦版擁有擴充至 **100 題** 的深度雙語國家知識庫！無論你選擇任何國家，自適應科普引擎皆能即刻為你呈現高質感的問答，且**連續 20 題絕對不重複**！
-                    <span class="block mt-1 text-xs md:text-sm text-slate-500">Featuring an expanded database of 100 unique questions (20 questions per country). Our smart shuffle engine guarantees no repeating questions for up to 20 rounds!</span>
+                    本版本已全面對接雲端 **Gist 100 題旗艦資料庫**！所有數據實時遠端拉取，網頁載入快如閃電，且**連續 20 題絕對不重複**！
+                    <span class="block mt-1 text-xs md:text-sm text-slate-500">Connected to your external GitHub Gist (100 premium questions). All questions are fetched dynamically, keeping the web page extremely lightweight and fast!</span>
                 </p>
             </div>
 
@@ -197,7 +198,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                                 </svg>
                             </span>
-                            <span class="text-xs font-normal opacity-85">Start Exploring Trivia (Offline)</span>
+                            <span class="text-xs font-normal opacity-85">Start Exploring Trivia (Cloud DB)</span>
                         </button>
                     </div>
                 </div>
@@ -411,7 +412,7 @@
     <!-- 底部資訊 / Footer -->
     <footer class="border-t border-slate-900 bg-slate-950/40 text-slate-500 text-xs py-6">
         <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p>© 2026 全球知識探索家 (離線穩定版). 內置雙語微型常識資料庫 / Local Fast-Load Bilingual Database</p>
+            <p>© 2026 全球知識探索家 (雲端旗艦版). 遠端雙語微型事實型常識資料庫 / Cloud-Delivered Fast-Load Bilingual Database</p>
             <div class="flex space-x-6">
                 <a href="#" onclick="showInfoModal(event)" class="hover:text-slate-300 transition-colors flex items-center space-x-1">
                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -465,8 +466,8 @@
             </div>
             <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
                 <p>
-                    本版本為 **「純單機完全離線遊玩版」**，不需要任何 API 連接。我們為熱門推薦國家預先設置了極具教育價值、高度查證過的雙語選擇題庫。
-                    <span class="block text-xs mt-1 text-slate-500 font-medium">This is a fully standalone, zero-API edition. We pre-compiled a precise, verified bilingual trivia database for all the popular countries.</span>
+                    本版本為 **「雲端題庫旗艦版」**。我們將精心校對的 100 題五國雙語資料庫存儲在 GitHub Gist 雲端，當使用者啟動旅程時，程式碼會以無阻礙的非同步請求快速拉取資料。
+                    <span class="block text-xs mt-1 text-slate-500 font-medium">This edition fetches verified, premium bilingual question pools directly from an external GitHub Gist JSON on-the-fly, keeping the page loading time incredibly fast.</span>
                 </p>
                 <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-2">
                     <div class="flex flex-col text-indigo-300 font-bold">
@@ -478,8 +479,8 @@
                         </span>
                     </div>
                     <p class="text-xs leading-relaxed">
-                        如果你在輸入框中打入了「任何」非內置的國家名稱，系統會立刻啟動極具巧思的動態環境模擬演算法，將你輸入的國家名稱注入高度精準的物理、天文、地理真理考題（例如北極星仰角、經度直線漫遊等），實現真正意義上的「萬用自適應遊玩模式」！
-                        <span class="block mt-1 text-slate-500">If you type any custom country, our smart template engine seamlessly integrates your input into robust, mathematically and geographically true scientific puzzles.</span>
+                        如果你在輸入框中打入了任何非 Gist 內置的國家名稱，或在完全離線狀態下，系統會立刻啟動極具巧思的動態環境模擬演算法，將你輸入的國家名稱注入高度精準的物理、天文、地理真理考題（例如北極星仰角、經度直線漫遊等），實現真正意義上的「萬用自適應遊玩模式」！
+                        <span class="block mt-1 text-slate-500">If you type any custom country or face network issues, our fallback engine seamlessly integrates your input into robust, mathematically and geographically true scientific puzzles.</span>
                     </p>
                 </div>
                 <p>
@@ -493,720 +494,42 @@
         </div>
     </div>
 
-    <!-- 邏輯處理 JS / Offline Engine -->
+    <!-- 邏輯處理 JS / Core Engine -->
     <script>
-        // 內置的高品質雙語國家知識資料庫 (完全核實 facts，中英雙語對照) - 擴充至每國至少 20 題或完整大題庫 (台灣、瑞士、義大利、墨西哥、希臘各 20 題)
-        const localDatabase = {
-            '台灣': [
-                {
-                    question: "台灣著名的夜市小吃「蚵仔煎」，其起源據說與哪位歷史人物在糧食短缺時的應變有關？ / The origin of Taiwan's famous night market snack 'Oyster Omelet' is said to be related to which historical figure's resourcefulness during food shortages?",
-                    options: ["鄭成功 / Koxinga", "施琅 / Shi Lang", "劉銘傳 / Liu Ming-chuan", "朱一貴 / Zhu Yigui"],
-                    correctIndex: 0,
-                    explanation: "相傳荷蘭軍隊佔領台南時，鄭成功軍隊糧食短缺，便將在地盛產的牡蠣與地瓜粉混合煎烤，因而發明了蚵仔煎。 / Legend has it that when Koxinga's army faced food shortages during the Tainan siege, they mixed local oysters with sweet potato starch to make omelets, creating the famous oyster omelet.",
-                    source: "中華民國交通部觀光署 / Tourism Administration, ROC"
-                },
-                {
-                    question: "台灣擁有世界密度最高的高山島嶼地形之一。請問台灣超過 3,000 公尺的高山共有多少座？ / Taiwan has one of the highest densities of high-mountain terrain in the world. How many peaks in Taiwan exceed 3,000 meters in elevation?",
-                    options: ["約 100 座 / Around 100 peaks", "約 160 座 / Around 160 peaks", "約 260 多座 / Over 260 peaks", "約 350 座 / Around 350 peaks"],
-                    correctIndex: 2,
-                    explanation: "台灣面積雖小，但海拔超過 3,000 公尺的高山高達 268 座，高山密度名列世界前茅。 / Despite its small size, Taiwan is home to 268 peaks over 3,000 meters, making it one of the densest high-mountain regions on Earth.",
-                    source: "中華民網路政部國家公園署 / National Parks Agency, Ministry of the Interior"
-                },
-                {
-                    question: "位於台灣東部的太魯閣國家公園以其壯麗的大理岩峽谷聞名世界。請問這片雄偉的深邃峽谷主要是由哪一條河流歷經數百萬年切穿而成的？ / Taroko National Park in eastern Taiwan is world-famous for its spectacular marble canyon. This majestic deep gorge was primarily carved out by which river over millions of years?",
-                    options: ["秀姑巒溪 / Xiuguluan River", "立霧溪 / Liwu River", "濁水溪 / Zhuoshui River", "曾文溪 / Zengwen River"],
-                    correctIndex: 1,
-                    explanation: "立霧溪發源自中央山脈，由於台灣地殼構造運動不斷隆起，加上立霧溪極強的向下侵蝕力，才切穿了大理石岩層，雕琢出無與倫比的太魯閣峽谷。 / The Liwu River originates in the Central Mountain Range. Due to continuous tectonic uplift of Taiwan's crust combined with the river's immense downward erosive power, it carved through the marble layers to form Taroko Gorge.",
-                    source: "內政部國家公園署太魯閣國家公園管理處 / Taroko National Park Administration"
-                },
-                {
-                    question: "台灣風靡全球的「珍珠奶茶」（Bubble Tea）起源於 1980 年代。請問其核心配料「粉圓」（Tapioca Pearls）主要是使用哪一種植物的澱粉製成的？ / Taiwan's globally popular 'Bubble Tea' originated in the 1980s. Its core ingredient, 'Tapioca Pearls', is primarily made from the starch of which plant?",
-                    options: ["木薯（樹薯） / Cassava (Manioc)", "番薯（甘薯） / Sweet Potato", "馬鈴薯 / Potato", "芋頭 / Taro"],
-                    correctIndex: 0,
-                    explanation: "黑色的粉圓主要是使用木薯（樹薯）的澱粉製成，加入黑糖或焦糖上色。這種澱粉賦予了粉圓極具彈性與韌性的特口感。 / Black tapioca pearls are primarily made from cassava root starch (tapioca), colored with brown sugar or caramel. This starch provides the pearls with their signature chewy and bouncy texture.",
-                    source: "行政院農業部全球資訊網 / Ministry of Agriculture, Executive Yuan"
-                },
-                {
-                    question: "台灣擁有一種被列為「冰河孑遺生物」的國寶魚——櫻花鉤吻鮭。請問牠們為何會從原本可以洄游大海的魚類，變成只能終生生活在台灣高山溪流的陸封型鮭魚？ / Taiwan is home to a national treasure fish, the Formosan Landlocked Salmon, a 'glacial relict'. Why did they transform from migratory ocean salmon into landlocked fish living exclusively in high-mountain streams?",
-                    options: ["因為高山水溫過低不適宜洄游 / Because the water temperature was too cold", "因為冰河期過後地殼上升與河川變遷切斷了通往大海的去路 / Post-glacial tectonic uplift and river channel changes blocked their path back to the ocean", "因為牠們適應了高山溪流中豐富的陸生昆蟲 / Because they preferred the rich terrestrial insects in mountain streams", "因為外來掠食者佔據了下游河段 / Because non-native predators occupied the downstream waters"],
-                    correctIndex: 1,
-                    explanation: "櫻花鉤吻鮭是末次冰期遺留下來的生物。大約在一萬五千年前冰河期結束後，氣溫上升，加上台灣地殼劇烈隆起，導致大甲溪上游的地形與河道改變，將牠們封鎖在水溫低於攝氏15度的櫻花鉤吻鮭生態保護區。 / The Formosan Landlocked Salmon is a relic of the last ice age. As temperatures warmed about 15,000 years ago and Taiwan's crust experienced dramatic uplift, the geological changes in the upper Tachia River cut off their route to the sea.",
-                    source: "雪霸國家公園管理處櫻花鉤吻鮭生態保護區 / Shei-Pa National Park Administration"
-                },
-                {
-                    question: "台灣第一高峰玉山（Yushan）海拔 3,952 公尺。請問在日治時期，這座山因為高度超越了富士山，曾被日本官方賦予何種特殊名稱？ / Yushan, standing at 3,952 meters, is the highest peak in Taiwan. During the Japanese colonial period, what special name was it given because it surpassed Mount Fuji in height?",
-                    options: ["大高山 / Great Mountain", "新高山 / Mount Niitaka", "神高山 / Mount Shintaka", "高砂山 / Mount Takasago"],
-                    correctIndex: 1,
-                    explanation: "明治天皇於 1897 年下詔將高度超過富士山（3,776公尺）的玉山命名為「新高山」（Mount Niitaka），意為『新的最高山』。 / In 1897, the Meiji Emperor designated Yushan as 'Mount Niitaka' (meaning New High Mountain) because it was taller than Japan's highest peak, Mount Fuji (3,776 meters).",
-                    source: "中華民國國家圖書館台灣記憶存檔 / National Central Library, Taiwan Memory"
-                },
-                {
-                    question: "台灣新北市平溪區著名的「天燈」文化，在清領時期最初的歷史用途是什麼？ / What was the primary historical purpose of the famous 'Sky Lanterns' in Pingxi, New Taipei City, during the Qing Dynasty?",
-                    options: ["向天神祈求風調雨順的宗教儀式 / A religious ritual to pray to gods for rain", "村民躲避盜匪時，用來報平安與傳遞求救訊號 / Used as communication signals to report safety or call for help during bandit raids", "中秋佳節親友團聚的娛樂活動 / A mid-autumn festival entertainment activity for families", "清代軍隊夜間行軍的照明工具 / A night military illumination tool used by the Qing army"],
-                    correctIndex: 1,
-                    explanation: "早期平溪十分寮地區常有盜匪騷擾。村民進山避難時，留守的人會施放天燈作為訊號，通知躲避的村民可以安全返家，因而得名「孔明燈」或「放天燈」。 / Early Pingxi was prone to bandit raids. Villagers fled into mountains, and those left behind released sky lanterns to signal that the bandits had left and it was safe to return.",
-                    source: "新北市平溪區公所文化歷史課 / Pingxi District Office, New Taipei City"
-                },
-                {
-                    question: "台灣野柳地質公園最著名的地標「女王頭」面臨風化斷頸危機。請問這種獨特的地形在地理學上屬於何種類型？ / The iconic 'Queen's Head' in Yehliu Geopark faces collapse due to weathering. Geologically, what type of rock formation is it?",
-                    options: ["火山熔岩柱 / Volcanic Basalt Column", "蕈狀石 / Mushroom Rock", "石灰岩溶洞 / Limestone Karst Cave", "海蝕海拱 / Sea Arch"],
-                    correctIndex: 1,
-                    explanation: "女王頭屬於蕈狀石（Mushroom Rock）。它是由於上方砂岩層較為堅硬，下方鈣質砂岩層軟弱，在長年的風化、差异侵蝕與海水沖刷下，雕琢成形。 / The Queen's Head is a mushroom rock. It was formed by differential erosion, where the softer sand under the harder cap was weathered away at a much faster rate by wind and waves.",
-                    source: "交通部觀光署北海岸及觀音山國家風景區管理處 / North Coast and Guanyinshan National Scenic Area"
-                },
-                {
-                    question: "阿里山森林鐵路（Alishan Forest Railway）是世界著名的登山鐵路之一。請問它為了克服高陡坡度，主要採用了何種特殊的行車運作技術？ / The Alishan Forest Railway is a world-class mountain railway. Which specialized operational technique does it use to overcome extremely steep slopes?",
-                    options: ["齒軌登山登山鐵道系統 / Cogwheel rack railway system", "Z字形折返（俗稱「火車碰壁」）與螺旋形登山 / Z-shaped switchbacks & spiral loop climbing", "高張力鋼索拉曳系統 / High-tension cable-pulling system", "雙頭蒸汽機車同軸推拉 / Double-headed steam push-pull propulsion"],
-                    correctIndex: 1,
-                    explanation: "阿里山森林鐵道採用了「Z字形折返登山」工法。火車以「碰壁」折返方式一進一退爬坡，並在獨立山路段以螺旋形繞行三圈爬升。 / To scale the steep slopes, the railway employs Z-shaped switchbacks (trains reverse direction to ascend) and three spiral loop runs around Independent Mountain.",
-                    source: "行政院農業部林業及自然保育署 / Forestry and Nature Conservation Agency"
-                },
-                {
-                    question: "日月潭（Sun Moon Lake）是台灣最大的半人工淡水湖。請問，日月潭湖畔的原住民族，且也是台灣官方認定人數較少、擁有傳統「浮田」捕魚技術的原住民是哪一族？ / Which indigenous tribe lives near Sun Moon Lake and is famous for their traditional 'floating crop' fishing technique?",
-                    options: ["邵族 / Thao", "鄒族 / Tsou", "泰雅族 / Atayal", "布農族 / Bunun"],
-                    correctIndex: 0,
-                    explanation: "邵族（Thao）終生與日月潭相依，他們發明了「浮田」（Lalu）捕魚與竹筏捕魚，是人數最少且文化保存完整的台灣原住民族之一。 / The Thao tribe has been living by Sun Moon Lake for centuries. They developed 'floating islands' (floating fields made of plants) to trap fish and are one of Taiwan's smallest officially recognized tribes.",
-                    source: "原住民族委員會全球資訊網 / Council of Indigenous Peoples"
-                },
-                {
-                    question: "澎湖群島（Penghu）擁有世界級的「玄武岩」柱狀關節地貌。請問這些排列整齊的宏偉石柱主要是如何形成的？ / The Penghu archipelago is famous for its world-class columnar basalt. How were these neatly arranged pillars formed?",
-                    options: ["火山噴發後的玄武岩岩漿冷凝收縮，在均勻降溫中裂開形成 / Columnar jointing formed by the cooling and contraction of basaltic lava from volcanic eruptions", "海底強烈板塊擠壓導致沈積岩垂直隆起裂開 / Vertical uplift of sedimentary rocks from plate compression", "數萬年珊瑚礁受酸性海水溶蝕而成的天然地貌 / Millions of years of acid seawater weathering of coral reefs", "古河流搬運冰川沖積物在海口堆積擠壓而成 / Glacial deposits stacked and compressed at prehistoric river mouths"],
-                    correctIndex: 0,
-                    explanation: "澎湖是火山活動形成的。玄武岩熔岩冷卻收縮時，因物理張力均勻分布，會在垂直於冷卻面的方向形成五角或六角形的柱狀節理。 / Penghu was formed by ancient undersea volcanic activities. As the low-viscosity basaltic lava cooled and contracted, it cracked into regular hexagonal or pentagonal columns.",
-                    source: "澎湖國家風景區管理處 / Penghu National Scenic Area Administration"
-                },
-                {
-                    question: "台南安平古堡（Anping Fort）是台灣歷史最悠久的城堡。請問它最初在 17 世紀由荷蘭人建造時，被命名為什麼城堡？ / Anping Fort in Tainan is Taiwan's oldest fort. What was its original name when built by the Dutch in the 17th century?",
-                    options: ["聖薩爾瓦多城 / Fort San Salvador", "普羅民遮城 / Fort Provintia", "熱蘭遮城 / Fort Zeelandia", "紅毛城 / Fort San Domingo"],
-                    correctIndex: 2,
-                    explanation: "荷蘭東印度公司於 1624 年在台南安平建城，命名為「熱蘭遮城」（Fort Zeelandia），作為對亞貿易的樞紐。 / The Dutch East India Company founded Fort Zeelandia in 1624 on the peninsula of Tayouan (modern Anping, Tainan) as their primary international trading headquarters.",
-                    source: "台南市政府文化局 / Tainan City Government Cultural Affairs Bureau"
-                },
-                {
-                    question: "台北國立故宮博物院的鎮館之寶之一「翠玉白菜」，其菜葉上的兩隻昆蟲（象徵多子多孫）是什麼？ / The 'Jadeite Cabbage' in Taipei's National Palace Museum features two insects on its leaves symbolizing fertility. What are they?",
-                    options: ["蟈蟈（織娘）與蝗蟲 / Chinese bush cricket & Locust", "蝴蝶與毛毛蟲 / Butterfly & Caterpillar", "蜜蜂與螳螂 / Honeybee & Praying Mantis", "蟬與蜻蜓 / Cicada & Dragonfly"],
-                    correctIndex: 0,
-                    explanation: "翠玉白菜菜葉上雕刻著一隻蟈蟈（紡織娘）和一隻蝗蟲，這在中國傳統文化中寓意著「多子多孫」與子嗣繁衍。 / The cabbage is carved with a locust and a bush cricket (katydid) camouflaged among the leaves, traditional Chinese symbols of fertility and prosperous descendants.",
-                    source: "國立故宮博物院學術研究檔案 / National Palace Museum, Taipei"
-                },
-                {
-                    question: "台東外海的離島「蘭嶼」是達悟族（雅美族）的家園。達悟族男子捕魚時常穿著丁字褲並划著彩繪獨木舟。請問，這艘拼板舟的紅白黑圖騰中，象徵著「避邪與保佑平安的眼睛」圖騰是什麼？ / Orchid Island (Lanyu) is home to the Tao (Yami) tribe. What is the name of the eye-like emblem painted on their iconic canoes to ward off evil spirits?",
-                    options: ["達悟之月 / The Tao Moon", "船之眼（Mata no tatara） / Eye of the Boat", "飛魚之神 / God of Flying Fish", "祖靈的凝視 / Gaze of the Ancestor"],
-                    correctIndex: 1,
-                    explanation: "船首兩側的同心圓「船之眼」（Mata no tatara），如同大船的眼睛，具有指引方向、避邪、保佑出海平安與豐收的神聖意義。 / The 'Mata no tatara' (Eye of the Boat) consists of concentric circles painted on the bow. It acts as a sacred compass to guide the boat, ward off evil spirits, and bring bountiful flying fish catches.",
-                    source: "台東縣政府原住民行政處 / Taitung County Government Indigenous Civil Affairs"
-                },
-                {
-                    question: "台灣黑熊（Formosan Black Bear）是台灣特有的亞洲黑熊亞種。請問牠們最引人注目的特徵是什麼？ / The Formosan Black Bear is an endemic subspecies. What is their most striking and recognizable physical feature?",
-                    options: ["胸前有白色的V字形（新月形）斑紋 / A distinct white V-shaped (crescent) mark on their chest", "全身覆蓋著長達20公分的剛硬棕毛 / Enormous stiff brown fur up to 20 cm", "耳朵呈顯眼的亮黃色斑點狀 / Bright yellow spotted ears", "尾巴特別長且長有蓬鬆的白色毛叢 / An exceptionally long tail with a white fluffy tuft"],
-                    correctIndex: 0,
-                    explanation: "台灣黑熊胸前有著極為鮮明、呈黃白色或白色的「V字型」新月形斑紋，因此也被俗稱為「月熊」（Moon Bear）。 / The most distinctive trait of the Formosan Black Bear is the yellowish-white crescent or 'V' shape mark on its chest, earning them the nickname 'Moon Bears'.",
-                    source: "農業部林業及自然保育署野生動物保育科 / Forestry and Nature Conservation Agency"
-                },
-                {
-                    question: "台灣本島的哪一個縣市，同時立有兩座跨越「北回歸線」（Tropic of Cancer）的紀念碑？ / Which county in Taiwan is home to two separate Tropic of Cancer monuments?",
-                    options: ["花蓮縣 / Hualien County", "嘉義縣 / Chiayi County", "台東縣 / Taitung County", "澎湖縣 / Penghu County"],
-                    correctIndex: 0,
-                    explanation: "花蓮縣境內同時擁有兩座北回歸線標誌碑，分別位於縱谷區的瑞穗鄉舞鶴台地，以及海岸公路上的豐濱鄉靜浦村。 / Hualien County is unique for housing two Tropic of Cancer monuments: one on the Wuhe Terrace in Ruisui Township (rift valley) and another in Jingpu, Fengbin Township (coastal highway).",
-                    source: "交通部觀光署東部海岸國家風景區管理處 / East Coast National Scenic Area Office"
-                },
-                {
-                    question: "基隆「雞籠中元祭」是台灣最盛大的傳統祭典之一。請問在農曆七月十四日晚上舉辦、旨在指引水路亡魂上岸接受超度的核心儀式是什麼？ / What is the central ritual of the Keelung Mid-Summer Ghost Festival held on Lunar July 14th to guide lost souls of the sea?",
-                    options: ["施放海上水燈頭 / Releasing of water lanterns into the sea", "搶孤登山競賽 / Qianggu pole climbing competition", "大士爺點火焚化 / Incineration of the King of Ghosts statue", "跳鍾馗驅邪出巡 / Performing Zhong Kui dance exorcism procession"],
-                    correctIndex: 0,
-                    explanation: "放水燈是中元祭的最高潮。各姓氏宗親會的紙紮水燈排在海邊點火推入海中，水燈漂得越遠、燒得越旺，代表該家族未來一年運勢越旺。 / The floating water lantern ceremony is the highlight. Paper houses are set on fire and pushed into the ocean; the further and brighter a lantern floats, the greater the fortune brought to that clan.",
-                    source: "基隆市政府文化局 / Keelung City Government Bureau of Culture"
-                },
-                {
-                    question: "在台灣金門島（Kinmen）隨處可見高大威猛的「風獅爺」石雕。請問金門村民最初豎立風獅爺的核心目的是什麼？ / What was the primary historical purpose of the 'Wind Lion Gods' (Fengshiye) stone statues in Kinmen?",
-                    options: ["鎮風辟邪、祈求抵擋東北季風與飛沙 / Warding off evil spirits and blocking the strong northeast winter monsoons and drifting sand", "作為清代兵營之間的軍事防禦瞭望台 / Serving as watchtowers between Qing dynasty military encampments", "向海神祈求航海豐收與避免船難 / Praying to the Sea Goddess for bountiful catch and avoiding shipwrecks", "用作測量農地界線與氣象觀測的石碑 / Serving as stone markers for farm boundary surveys and weather forecasting"],
-                    correctIndex: 0,
-                    explanation: "金門因歷史上森林砍伐殆盡，冬春兩季東北季風肆虐。村民遂引進閩南風獅爺信仰，在村口迎風處樹立獅像，期盼鎮風、辟邪並阻擋飛沙襲擊。 / Kinmen is highly exposed to strong winter monsoons due to historical deforestation. Villagers erected Wind Lion statues facing northeast at village entrances to symbolically swallow the wind and stop drifting sand.",
-                    source: "金門縣政府文化局 / Kinmen County Government Cultural Affairs Bureau"
-                },
-                {
-                    question: "每年春夏季，台灣馬祖群島外海會出現如銀河般夢幻的「藍眼淚」奇觀。請問這種耀眼的藍光在自然科學上是由什麼引起的？ / The dreamlike 'Blue Tears' in Matsu during spring and summer are caused by which natural scientific phenomenon?",
-                    options: ["水下磷礦石受月光折射 / Underwater phosphorus minerals reflecting moonlight", "一種發光甲藻（夜光蟲）受到波浪攪動刺激而產生的生物熒光 / Bioluminescence of dinoflagellates triggered by wave disturbance", "深海劇毒水母集體大量繁衍產生的發光液體 / Chemical discharge from highly toxic deep-sea jellyfish swarms", "沿岸工業廢水中的化學重金屬殘留反應 / Chemical reactions of heavy metals in coastal industrial wastewater"],
-                    correctIndex: 1,
-                    explanation: "馬祖「藍眼淚」是一種發光藻類——夜光蟲（Noctiluca scintillans）。當海水波動攪動牠們時，細胞內會進行化學發光反應，釋放出螢光藍光。 / Matsu's 'Blue Tears' are natural blooms of bioluminescent dinoflagellates. When agitated by waves, they generate a light-emitting chemical reaction inside their cells, glowing bright neon blue.",
-                    source: "中華民國海洋委員會海洋保育署 / Ocean Conservation Administration, ROC"
-                },
-                {
-                    question: "台灣半導體產業位居全球樞紐地位。請問有「台灣矽谷」之稱、也是台灣最核心的科學工業園區是哪一個？ / Taiwan's semiconductor industry leads the world. Which science park is famously nicknamed the 'Silicon Valley of Taiwan'?",
-                    options: ["中部科學園區 / Central Taiwan Science Park", "新竹科學園區 / Hsinchu Science Park", "南部科學園區 / Southern Taiwan Science Park", "內湖科技園區 / Neihu Technology Park"],
-                    correctIndex: 1,
-                    explanation: "新竹科學園區成立於 1980 年，聚集了台積電（TSMC）、聯發科等多家世界半導體巨頭，是全球半導體製造與技術最核心的聚落。 / Established in 1980, Hsinchu Science Park is the anchor of global microchip and advanced electronics development, hosting semiconductor giants like TSMC.",
-                    source: "國家科學及技術委員會新竹科學園區管理局 / Hsinchu Science Park Bureau"
-                }
-            ],
-            '瑞士': [
-                {
-                    question: "瑞士阿爾卑斯山脈中最著名、外觀呈不對稱金字塔形，且印在三角巧克力（Toblerone）包裝上的山峰是哪一座？ / Which iconic, asymmetrical pyramid-shaped mountain in the Swiss Alps was famously featured on the Toblerone chocolate packaging?",
-                    options: ["少女峰 / Jungfrau", "馬特洪峰 / Matterhorn", "艾格峰 / Eiger", "白朗峰 / Mont Blanc"],
-                    correctIndex: 1,
-                    explanation: "馬特洪峰（Matterhorn）海拔 4,478 公尺，以其雄偉的四面金字塔造型聞名世界，是阿爾卑斯山最著名的象徵之一。 / The Matterhorn, standing at 4,478 meters, is famous for its majestic four-sided pyramidal shape and is one of the most iconic symbols of the Alps.",
-                    source: "瑞士國家旅遊局 / Switzerland Tourism"
-                },
-                {
-                    question: "瑞士的首都並非日內瓦或蘇黎世，而是哪一個擁有中世紀古城、被列為世界文化遺產的城市？ / Switzerland's capital is not Geneva or Zurich, but which city featuring a UNESCO-listed medieval Old Town?",
-                    options: ["巴塞爾 / Basel", "盧塞恩 / Lucerne", "洛桑 / Lausanne", "伯恩 / Bern"],
-                    correctIndex: 3,
-                    explanation: "雖然瑞士憲法未明確規定「首都」，但伯恩（Bern）事實上是聯邦政府的所在地，其保留完整的中世紀街區在 1983 年被列為世界遺產。 / Although Switzerland's constitution doesn't explicitly name a 'capital', Bern serves as the federal city and its exceptionally preserved medieval center was designated a UNESCO World Heritage site in 1983.",
-                    source: "聯合國教科文組織世界遺產中心 / UNESCO World Heritage Centre"
-                },
-                {
-                    question: "總部位於瑞士與法國邊界的「歐洲核子研究組織」（CERN），除了擁有世界最大的強子對撞機外，還是哪一項改變人類社會的網路技術的誕生地？ / CERN, located on the Swiss-French border, is famous for the Large Hadron Collider, but it is also the birthplace of which revolutionary internet technology?",
-                    options: ["全球資訊網（WWW） / The World Wide Web", "電子郵件（E-mail） / Electronic Mail", "網際網路協議（IP） / Internet Protocol", "無線網路技術（Wi-Fi） / Wireless Fidelity"],
-                    correctIndex: 0,
-                    explanation: "1889年，英國科學家提姆·柏內茲-李（Tim Berners-Lee）在瑞士 CERN 工作時發明了全球資訊網（World Wide Web），最初是為了方便全球物理學家能即時分享與檢索資訊。 / In 1989, British scientist Tim Berners-Lee invented the World Wide Web while working at CERN in Switzerland, originally to allow physicists worldwide to share information automatically.",
-                    source: "歐洲核子研究組織官方歷史存檔 / CERN Document Server"
-                },
-                {
-                    question: "瑞士在鐵路工程學上創下了許多世界紀錄。請問目前世界上「最長且最深」的鐵路隧道是哪一條？ / Switzerland has achieved legendary engineering records. Which tunnel currently holds the title of the world's longest and deepest railway tunnel?",
-                    options: ["聖哥達基線隧道 / Gotthard Base Tunnel", "英吉利海峽隧道 / Channel Tunnel", "青函隧道 / Seikan Tunnel", "勒奇山基線隧道 / Lötschberg Base Tunnel"],
-                    correctIndex: 0,
-                    explanation: "聖哥達基線隧道（Gotthard Base Tunnel）全長57.1公里，最深處位於阿爾卑斯山岩層下2,300公尺，歷時17年建造，於2016年正式開通。 / The Gotthard Base Tunnel is 57.1 km long and reaches a maximum depth of 2,300 meters beneath the Alpine rock. It took 17 years to build and officially opened in 2016.",
-                    source: "瑞士聯邦鐵路管理局 / Swiss Federal Railways (SBB)"
-                },
-                {
-                    question: "著名的「瑞士萬用刀」（Swiss Army Knife）最初是為了提供瑞士士兵哪兩項基本野外功能而設計生產的？ / The famous 'Swiss Army Knife' was originally designed and manufactured to provide Swiss soldiers with which two primary field functions?",
-                    options: ["開罐頭與拆卸制式步槍 / Opening canned food & disassembling service rifles", "剪鐵絲網與點燃柴火 / Cutting wire fences & lighting campfires", "鋸木頭與測量地形 / Sawing wood & surveying terrain", "防身與切割皮革 / Self-defense & cutting leather"],
-                    correctIndex: 0,
-                    explanation: "1880年代末期，瑞士陸軍決定引入一款折疊多功能刀。其關鍵配備是「開罐器」（用來吃罐頭口糧）以及「螺絲起子」（用來清潔與拆卸當時士兵裝備的Schmidt-Rubin制式步槍）。 / In the late 1880s, the Swiss Army adopted a folding pocket knife. It required a can opener (for canned rations) and a screwdriver (for cleaning and disassembling the newly issued Schmidt-Rubin service rifle).",
-                    source: "瑞士國家博物館收藏檔案 / Swiss National Museum"
-                },
-                {
-                    question: "聯合國在歐洲最重要的辦事處「萬國宮」坐落在瑞士，此外許多世界級人道組織亦在此誕生。請問，以紅底白十字反轉（白底紅十字）為會徽、創立於瑞士的人道組織是？ / Which world-class humanitarian organization, using a reversed Swiss flag (red cross on white background) as its logo, was founded in Switzerland?",
-                    options: ["世界衛生組織 / World Health Organization", "國際紅十字會 / International Committee of the Red Cross", "無國界醫生 / Doctors Without Borders", "聯合國兒童基金會 / UNICEF"],
-                    correctIndex: 1,
-                    explanation: "紅十字會由瑞士商人亨利·杜南（Henry Dunant）於1863年在日內瓦創立。其白底紅十字會徽是向創始人的祖國瑞士（紅底白十字）表示致敬。 / The Red Cross was founded in 1863 in Geneva by Swiss businessman Henry Dunant. Its flag is a reverse of the Swiss flag, recognizing Dunant's native country.",
-                    source: "國際紅十字委員會官方歷史檔案 / International Committee of the Red Cross"
-                },
-                {
-                    question: "瑞士在語言文化上具有極高的多樣性。請問瑞士聯邦憲法規定的「官方語言（Official Languages）」共有幾種？ / Switzerland has high linguistic diversity. How many official languages are declared by the Swiss Federal Constitution?",
-                    options: ["1種 / One", "2種 / Two", "3種 / Three", "4種 / Four"],
-                    correctIndex: 3,
-                    explanation: "瑞士擁有四種國家官方語言：德語、法語、義大利語以及羅曼什語（Romansh）。其中德語人口比例最高。 / Switzerland recognizes four official languages: German, French, Italian, and Romansh, reflecting its rich multicultural history.",
-                    source: "瑞士聯邦門局官方網站 / Swiss Federal Council Portal"
-                },
-                {
-                    question: "瑞士的手錶製造業名揚世界，幾乎成了奢華、精準與頂級工藝的代名詞。請問，瑞士鐘錶業最初是由於 16 世紀哪一個宗教事件，導致大量法國鐘錶匠避難流入日內瓦而快速奠基的？ / The Swiss watch industry was historically boosted in the 16th century by which religious event that brought skilled French watchmakers to Geneva?",
-                    options: ["十字軍東征 / The Crusades", "法國宗教戰爭與胡格諾派新教徒大逃亡 / French Wars of Religion & Huguenot Protestant Refugee Flight", "羅馬教廷發動的大分裂 / The Great Papal Schism", "文藝復興的科學思想傳播 / Scientific ideas spread during the Renaissance"],
-                    correctIndex: 1,
-                    explanation: "1572年聖巴多羅買大屠殺後，法國新教徒（胡格諾派）大逃亡，包括許多手藝高超的法國鐘錶匠逃入日內瓦，與當地發達的金匠手藝結合，奠定了瑞士鐘錶王國的地位。 / After religious conflicts in France, Protestant refugees (including master French watchmakers) fled to Geneva. Combining their horological skills with Geneva's goldsmithing created the modern watchmaking industry.",
-                    source: "瑞士鐘錶工業聯合會歷史檔案 / Federation of the Swiss Watch Industry (FH)"
-                },
-                {
-                    question: "瑞士傳統的美食「起司鍋」（Fondue）是風靡全球的冬日美食。請問傳統上用來盛裝煮沸起司、由陶土製成的厚底平底煮鍋叫什麼名字？ / What is the traditional name for the clay, thick-bottomed pot used to cook and serve Swiss Cheese Fondue?",
-                    options: ["卡克隆鍋 / Caquelon", "塔吉鍋 / Tajine", "土鍋 / Donabe", "鑄鐵砂鍋 / Cocotte"],
-                    correctIndex: 0,
-                    explanation: "起司鍋專用的耐熱粗陶或鑄鐵厚底鍋稱為「Caquelon」（卡克隆鍋）。它能使溫度均勻釋放，防止起司在底部燒焦。 / The traditional glazed earthenware or cast-iron pot for fondue is called a 'Caquelon'. The materials are selected to evenly distribute heat and prevent the cheese from scorching.",
-                    source: "瑞士奶製品協會 / Switzerland Cheese Marketing"
-                },
-                {
-                    question: "瑞士屬於高度內陸國。請問瑞士國土與多少個國家接壤（鄰國數量）？ / Switzerland is landlocked. How many countries border Switzerland?",
-                    options: ["3個 / Three", "4個 / Four", "5個 / Five", "6個 / Six"],
-                    correctIndex: 2,
-                    explanation: "瑞士接壤5個國家：北鄰德國，西接法國，南鄰義大利，東臨奧地利和列支敦斯登。 / Switzerland is surrounded by 5 neighboring countries: Germany, France, Italy, Austria, and Liechtenstein.",
-                    source: "瑞士聯邦地形局 / Federal Office of Topography swisstopo"
-                },
-                {
-                    question: "羅馬梵蒂岡教廷的近衛軍「瑞士衛隊」（Pontifical Swiss Guard）身穿藍、紅、黃三色條紋的中世紀復古制服，手持長戟。請問梵蒂岡教皇為什麼堅持只僱用瑞士籍士兵？ / Why has the Vatican exclusively hired Swiss soldiers as the Pope's personal Swiss Guard since the Middle Ages?",
-                    options: ["因為1527年羅馬之劫中，189名瑞士衛兵為了掩護教皇撤退，死戰到最後一刻展現極致忠誠 / For their extreme loyalty during the 1527 Sack of Rome, where 189 Swiss guards died defending Pope Clement VII", "因為教皇本身是瑞士裔 / Because the original Popes were Swiss descendants", "因為瑞士憲法在當時強制規定必須提供教廷衛隊 / Due to a Swiss constitutional mandate in history", "因為瑞士人掌握了全世界最頂尖的火藥與火繩槍製造技術 / Because Swiss mercenaries had superior gunpowder technologies"],
-                    correctIndex: 0,
-                    explanation: "1527年神聖羅馬帝國洗劫羅馬，為保護教皇克勉七世撤退，189名瑞士衛兵死戰，其中147人英勇陣亡。其展現的驚人忠誠，使羅馬教廷自此規定教皇近衛軍必須永久僱用瑞士籍天主教徒。 / During the 1527 Sack of Rome, the Swiss Guard put up an heroic stand to cover Pope Clement VII's escape. 147 out of 189 guards fell in battle, securing their permanent duty as defenders of the Pontiff.",
-                    source: "梵蒂岡瑞士衛隊司令部 / Pontifical Swiss Guard Official Site"
-                },
-                {
-                    question: "瑞士與法國交界處有一個呈新月形、景色壯麗的阿爾卑斯冰川湖，法國人稱它為萊芒湖（Lac Léman），而瑞士人通常叫它什麼湖？ / What is the name commonly used by Swiss (especially internationally) for the crescent-shaped lake bordering France?",
-                    options: ["日內瓦湖 / Lake Geneva", "蘇黎世湖 / Lake Zurich", "盧塞恩湖 / Lake Lucerne", "博登湖 / Lake Constance"],
-                    correctIndex: 0,
-                    explanation: "該湖在國際上與瑞士方通常稱為「日內瓦湖」（Lake Geneva），是西歐面積最大的湖泊之一，由瑞士（60%）和法國（40%）共同管理。 / Lake Geneva is a deep, crescent-shaped lake located on the border between Switzerland and France. About 60% of the lake's area belongs to Switzerland.",
-                    source: "日內瓦湖航運公司 / Lake Geneva General Navigation Company (CGN)"
-                },
-                {
-                    question: "瑞士實行世界上最獨特、也是最極致的政治制度——「直接民主」（Direct Democracy）。請問在瑞士，公民每年能投票幾次，且只需集齊多少個簽名便可直接發動憲法修訂公投？ / Under Swiss Direct Democracy, how many signatures must a citizen collect to trigger a nationwide vote to amend the federal constitution?",
-                    options: ["1萬個 / 10,000", "5萬個 / 50,000", "10萬個 / 100,000", "50萬個 / 500,000"],
-                    correctIndex: 2,
-                    explanation: "瑞士公民只需在18個月內集齊10萬個有效簽名，便可提出「聯邦人民倡議」（Federal Popular Initiative），直接發動全民公投來修改憲法，投票一般每年舉行4次。 / If a citizen or group collects 100,000 signatures in 18 months, they can demand a nationwide popular vote on a proposed constitutional amendment.",
-                    source: "瑞士聯邦秘書處法律局 / Federal Chancellery, Switzerland"
-                },
-                {
-                    question: "位於瑞士北部的「萊茵瀑布」（Rhine Falls）雖然落差僅有 23 公尺，但它在自然地理上擁有何種卓越的歐洲紀錄？ / What prominent record does the Rhine Falls in northern Switzerland hold?",
-                    options: ["它是全歐洲落差最高的瀑布 / The tallest waterfall in Europe", "它是全歐洲水量最澎湃、規模最大的平原瀑布 / The most powerful plains waterfall in Europe", "它是全歐洲唯一能看見雙彩虹奇觀的瀑布 / The only waterfall in Europe with double rainbow occurrences", "它是全歐洲寬度最寬的階梯狀瀑布 / The widest multi-stepped waterfall in Europe"],
-                    correctIndex: 1,
-                    explanation: "萊茵瀑布寬度達 150 公尺，是全歐洲流量最大、水量最為澎湃的平原瀑布，春夏季融雪時每秒流量高達 600 立方公尺。 / The Rhine Falls is Europe's largest plain waterfall. Situated on the High Rhine, its average water flow during summer reaches up to 600,000 liters per second.",
-                    source: "沙夫豪森州旅遊局 / Schaffhauserland Tourism"
-                },
-                {
-                    question: "瑞士傳統樂器「阿爾卑斯長角號」（Alphorn）長度高達 3 至 4 公尺。請問，這項古老木管樂器在中世紀最初的歷史功用是什麼？ / What was the primary historical function of the 3-4 meter Swiss wooden Alphorn in the Alps?",
-                    options: ["在山谷與牧場之間傳遞訊號，以及安撫擠牛奶時的乳牛 / Communicating across valleys and calming cows during milking", "瑞士雇傭軍行軍衝鋒的號角 / Charging battle horn for Swiss mercenaries", "天主教主教登基大典的專用聖樂器 / Dedicated sacred instrument for coronation ceremonies", "測定風向與高山氣壓的簡易風向筒 / An auxiliary funnel to test wind direction"],
-                    correctIndex: 0,
-                    explanation: "長角號由整棵雲杉木剖開挖空製成，聲音渾厚能傳播數公里。在中世紀，阿爾卑斯牧民用它來向其他山頭報平安、召回牛群，並安撫擠奶中的乳牛。 / The Alphorn was carved from single pine trunks. Since its tone carried for kilometers, shepherds used it for communication across mountain walls and to soothe cows.",
-                    source: "瑞士傳統音樂協會 / Swiss Yodeling and Alphorn Association"
-                },
-                {
-                    question: "享譽國際、散布著許多圓形小孔洞的「瑞士起司」（如艾曼塔起司 Emmental）。請問，起司內這些可愛的孔洞到底是怎麼產生的？ / What causes the signature holes in famous Swiss cheeses like Emmental?",
-                    options: ["乳酸菌發酵時，釋放出的二氧化碳氣體無法排出而被包覆在起司內部形成的氣泡 / CO2 gas released by Propionibacterium fermentation trapped inside during aging", "老鼠囓咬起司邊緣留下的傳統手工造型 / Traditional hand-crafted shape mimicking mice bites", "製作時使用空心細鋼管穿刺透氣 / Hollow steel tubes punctured during pressing", "牛奶中的脂肪粒子因受冷收縮產生的中空裂隙 / Internal cracks caused by fat cell shrinkage during freezing"],
-                    correctIndex: 0,
-                    explanation: "製造過程中，丙酸桿菌（Propionibacterium）會分解乳酸，釋放出大量二氧化碳氣體。由於起司外皮硬化，氣體無法逃逸，便在軟化的起司內部擠出多個圓形氣泡洞。 / Fermentation by bacteria produces carbon dioxide bubbles during the warm aging phase. The gas gets trapped in the curd, creating smooth round holes (known as 'eyes').",
-                    source: "瑞士艾曼塔起司原產地保護協會 / Emmentaler Switzerland"
-                },
-                {
-                    question: "著名高山犬「聖伯納犬」（St. Bernard）原產於瑞士與義大利邊界。請問牠們在中世紀修道院最初是以何種特殊本領而聞名的？ / St. Bernard dogs are native to Swiss-Italian pass regions. What made them famous at medieval hospices?",
-                    options: ["高山雪地救援，能在大雪中嗅出並刨出被埋在雪地下的旅人 / High alpine snow rescue, smelling and digging out stranded travelers", "在陡峭岩壁上獵捕高山盤羊 / Hunting wild mountain goats on vertical cliffs", "在牧場上能抵擋狼群攻擊並看管羊群 / Guarding sheep against gray wolves", "拖曳沈重的木材雪橇穿越冰川 / Dragging heavy timber sleds across glaciers"],
-                    correctIndex: 0,
-                    explanation: "大聖伯納德修道院的僧侶馴養牠們，用來巡邏危險的高山山口。牠們擁有極強的嗅覺與極厚禦寒皮毛，能在大雪中找到被雪崩掩埋的垂死旅人並用身體為其保暖。 / Hospitaller monks utilized St. Bernards to patrol frozen mountain passes. These dogs saved over 2,000 travelers by locating people buried in avalanches.",
-                    source: "聖伯納Barry基金會 / Fondation Barry, Switzerland"
-                },
-                {
-                    question: "瑞士出了許多世界頂尖的體育名將。請問，被公認為史上最優雅、曾奪得 20 座大滿貫單打冠軍、代表瑞士在奧運會奪得金牌的網球巨星是誰？ / Which legendary Swiss tennis star won 20 Grand Slam singles titles and a gold medal at the Olympic Games?",
-                    options: ["羅傑·費德勒 / Roger Federer", "斯坦·瓦林卡 / Stan Wawrinka", "馬克·羅塞特 / Marc Rosset", "瑪蒂娜·辛吉斯 / Martina Hingis"],
-                    correctIndex: 0,
-                    explanation: "費德勒（Roger Federer）是瑞士的國家象徵與體育傳奇，他以完美的技術與優雅的體育風度，贏得了全世界的熱愛。 / Roger Federer is a native of Basel, Switzerland. He held the world No. 1 ranking for 310 weeks and won 20 Grand Slam titles during his illustrious career.",
-                    source: "國際男子職業網球聯合會 / Association of Tennis Professionals (ATP)"
-                },
-                {
-                    question: "瑞士的觀光列車享譽全球。其中連接聖莫里茨與策馬特、被戲稱為「世界上最慢快車」的觀光鐵路叫什麼名字？ / Which famous scenic Swiss train route connecting St. Moritz and Zermatt is nicknamed 'World's Slowest Express'?",
-                    options: ["冰河列車 / Glacier Express", "伯連納列車 / Bernina Express", "黃金列車 / GoldenPass Express", "巧克力列車 / Chocolate Train"],
-                    correctIndex: 0,
-                    explanation: "冰河列車（Glacier Express）全程需要約8小時行駛291公里，因其沿途翻山越嶺、跨越無數大橋，時速僅約36公里，因此得名「世界上最慢的特快車」。 / The Glacier Express connects major Swiss ski resorts. It takes 8 hours to cover 291 km, crossing 291 bridges and 91 tunnels, moving at a scenic speed of 36 km/h.",
-                    source: "瑞士冰河列車股份公司 / Glacier Express AG"
-                },
-                {
-                    question: "瑞士的高山小鎮「達沃斯」（Davos）是歐洲海拔最高的城鎮之一。請問它在每年的一月份，會因為舉辦哪一項全球政治經濟巨頭齊聚的會議而聞名世界？ / The high alpine Swiss resort of Davos is famous for hosting which global high-level political and economic meeting every January?",
-                    options: ["世界經濟論壇年會 / World Economic Forum Annual Meeting (WEF)", "聯合國氣候變遷大會 / UN Climate Change Conference", "二十國集團首腦會議 / G20 Summit", "北大西洋公約組織安全論壇 / NATO Security Forum"],
-                    correctIndex: 0,
-                    explanation: "達沃斯是「世界經濟論壇」（World Economic Forum，俗稱達沃斯論壇）的長期主辦地，每年一月世界各國政要、商業領袖與頂尖學者都會聚集於此討論全球挑戰。 / Davos hosts the World Economic Forum Annual Meeting, where world leaders, CEOs, and scholars gather to shape global, regional, and industrial agendas.",
-                    source: "世界經濟論壇組織官方網站 / World Economic Forum (WEF)"
-                }
-            ],
-            '義大利': [
-                {
-                    question: "古羅馬帝國時期，除了用於神廟與宮殿建築，哪一種發明讓羅馬人能建造出舉世聞名的水道橋與巨大的圓形競技場？ / During the Ancient Roman Empire, besides temple architecture, which invention allowed Romans to construct world-famous aqueducts and the massive Colosseum?",
-                    options: ["鋼筋 / Rebar", "火山灰混凝土 / Volcanic ash concrete", "燒結粘土磚 / Sintered clay bricks", "大理石貼面 / Marble veneering"],
-                    correctIndex: 1,
-                    explanation: "羅馬人發明了結合火山灰、石灰與碎石的水中硬化混凝土（Roman Concrete），其卓越的強度與耐用度支撐起羅馬帝國宏偉的圓頂和拱券結構。 / Romans invented Roman concrete, a mixture of volcanic ash (pozzolana), lime, and rubble, which cured even underwater and allowed for incredibly strong and durable structures like arches and domes.",
-                    source: "大英百科全書 / Encyclopædia Britannica"
-                },
-                {
-                    question: "源自義大利那不勒斯，最經典的「瑪格麗特披薩」（Pizza Margherita）僅用番茄、莫札瑞拉乾酪與羅勒葉製作，這三種配料代表了什麼？ / Originating in Naples, Italy, the classic 'Pizza Margherita' is made with only tomato, mozzarella, and basil. What do these three ingredients represent?",
-                    options: ["義大利國旗的顏色 / The colors of the Italian flag", "天主教的三位一體 / The Catholic Holy Trinity", "那不勒斯的三個守護神 / The three patron saints of Naples", "豐收時節的陽光、雪與森林 / Summer sun, snow, and forests"],
-                    correctIndex: 0,
-                    explanation: "1889 年廚師為了迎接薩伏依王后瑪格麗特，特製了這款紅色番茄、白色莫札瑞拉與綠色羅勒的披薩，恰好拼出義大利國旗的紅、白、綠三色。 / In 1889, Naples pizzaiolo Raffaele Esposito created this pizza for Queen Margherita of Savoy, using red tomato, white mozzarella, and green basil to mirror the red, white, and green colors of the Italian flag.",
-                    source: "義大利國家觀光局 / Italian National Tourist Board (ENIT)"
-                },
-                {
-                    question: "義大利著名的「比薩斜塔」（Leaning Tower of Pisa）自建造初期就開始傾斜。請問這座鐘樓為什麼會向一側傾斜？ / The famous 'Leaning Tower of Pisa' began leaning during construction. Why did this bell tower tilt to one side?",
-                    options: ["因為建造時的地基太淺，且土壤是由不均勻的沙、粘土和淤泥組成的軟弱層 / Due to shallow foundations built on weak, unstable subsoil of sand, clay, and silt", "因為遭受了中世紀強烈地震的結構性破壞 / Structural damage from a major medieval earthquake", "因為使用了過重的重型大理石，導致單側地基開裂 / The marble used was too heavy on one side, causing foundation cracks", "因為當地的地下水位突然大範圍上升 / An abrupt regional rise in the groundwater table"],
-                    correctIndex: 0,
-                    explanation: "比薩斜塔於1173年動工，地基僅有3公尺深，且建在古河道氾濫平原的鬆軟沈積土上。當建到第三層時，地基軟土開始不均勻下陷，導致塔身終身傾斜。 / Construction began in 1173. The foundations were only 3 meters deep, built on weak alluvial silt and sand. When construction reached the third floor, the weak subsoil began to compress unevenly, causing the lifetime tilt.",
-                    source: "比薩主教座堂廣場工程修復局 / Opera della Primaziale Pisana"
-                },
-                {
-                    question: "被譽為「水都」的義大利威尼斯城，其成千上萬棟宏偉的石造建築之所以能在一片鬆軟的潟湖泥灘上屹立數百年不倒，其秘密地基是什麼？ / The majestic stone buildings of Venice, Italy, have stood for centuries on soft lagoon mud. What is the secret foundation supporting them?",
-                    options: ["密密麻麻打入水下缺氧泥層中的深層木頭樁 / Millions of deep wooden piles driven into the anaerobic subsoil layer", "巨大的火山岩空心浮力沉箱 / Giant hollow volcanic rock buoyancy caissons", "超大型鐵鑄錨鏈固定結構 / Enormous cast-iron anchor chains", "一層極厚的水中固化古羅馬混凝土 / A massive layer of Roman concrete poured under water"],
-                    correctIndex: 0,
-                    explanation: "威尼斯的建築是建造在數百萬根打入潟湖泥底硬粘土層（Caranto）的落葉松與橡木木樁地基上。木樁完全浸沒在缺氧的淤泥中，防止腐爛與蟲蛀，木纖維石化後反而變得更加堅固。 / Venice is built on millions of larch and oak wood piles driven deep into the Caranto clay layer. Because they are completely submerged in anaerobic mud, they do not rot, instead mineralizing over time into stone-like supports.",
-                    source: "威尼斯歷史古蹟維護委員會 / Superintendent of Monuments and Heritage of Venice"
-                },
-                {
-                    question: "位於南義的「龐貝古城」（Pompeii）在西元79年的一場天災中在一夜之間被徹底摧毀並埋入地下，直到18世紀才被考古學家重新發現。請問這場天災是？ / The ancient city of Pompeii was buried overnight in 79 AD and rediscovered in the 18th century. Which natural disaster caused this event?",
-                    options: ["維蘇威火山爆發與大量火山灰掩埋 / The eruption of Mount Vesuvius and massive volcanic ash burial", "地中海超級海嘯的淹沒與泥沙沉積 / A Mediterranean megatsunami inundation and sediment deposition", "深度斷層破裂引發的超級大地震 / A mega-earthquake caused by deep fault rupture", "台伯河大氾濫引發的致命土石流 / A fatal landslide caused by massive flooding of the Tiber River"],
-                    correctIndex: 0,
-                    explanation: "西元79年，維蘇威火山猛烈爆發，釋放出相當於數十萬倍原子彈威力的致命碎屑流、有毒氣體與數公尺厚的火山灰與浮石，將龐貝城完整封存，保留了古羅馬人最真實的日常生活場景。 / In 79 AD, Mount Vesuvius erupted catastrophically, burying Pompeii under meters of pumice and volcanic ash, perfectly preserving the ancient Roman town and its inhabitants' final moments.",
-                    source: "龐貝考古公園官方網站 / Pompeii Archaeological Park"
-                },
-                {
-                    question: "羅馬最偉大的遺跡「羅馬競技場」（Colosseum），在西元一世紀古羅馬帝國時期，大約能容納多少名觀眾同時進場觀賞角鬥士決鬥？ / The Colosseum in Rome was the largest amphitheater built during the Roman Empire. How many spectators could it hold?",
-                    options: ["約5,000人 / 5,000", "約15,000人 / 15,000", "約50,000至80,000人 / 50,000 to 80,000", "約250,000人 / 250,000"],
-                    correctIndex: 2,
-                    explanation: "競技場於西元80年完工，擁有極具前瞻性的座位編號與出入口系統（Vomitorium），能容納高達5萬至8萬名古羅馬公民進場觀看戲劇、格鬥與海戰模擬。 / Completed in 80 AD under Titus, the Colosseum could host between 50,000 and 80,000 spectators, arranged in tiers based on social class, evacuated in minutes via 80 vomitoria.",
-                    source: "羅馬競技場考古公園 / Parco Archeologico del Colosseo"
-                },
-                {
-                    question: "義大利半島地質活動非常活躍。請問在全歐洲的「大陸本土（Mainland Europe）」上，唯一的一座活火山是哪一座？ / Italy is highly geologically active. Which volcano is the only active one in mainland Europe?",
-                    options: ["維蘇威火山 / Mount Vesuvius", "埃特納火山 / Mount Etna", "斯特龍博利火山 / Stromboli", "聖托里尼火山 / Santorini"],
-                    correctIndex: 0,
-                    explanation: "雖然西西里島的埃特納火山（Etna）和斯特龍博利火山（Stromboli）更常噴發，但在「歐洲大陸本土」上，維蘇威火山是唯一的活動火山。 / While Etna and Stromboli are highly active, they are on islands. Mount Vesuvius is the only active volcano on the European mainland itself.",
-                    source: "義大利國家地球物理與火山學研究所 / INGV Italy"
-                },
-                {
-                    question: "義大利是偉大文藝復興運動（Renaissance）的搖籃。請問文藝復興是在哪一個義大利富庶城市，由於美第奇家族（Medici）的贊助而最先爆發的？ / The Renaissance was born in Italy. In which wealthy Italian city-state did this cultural movement originate, heavily funded by the Medici family?",
-                    options: ["羅馬 / Rome", "威尼斯 / Venice", "熱那亞 / Genoa", "佛羅倫斯 / Florence"],
-                    correctIndex: 3,
-                    explanation: "14世紀起，佛羅倫斯（Florence）成為地中海金融與貿易中心，強大的美第奇家族大力資助達文西、米開朗基羅等巨匠，使佛羅倫斯成為文藝復興的震央。 / Florence became the cultural cradle of Europe in the 14th century. Wealthy patrons like the Medici family funded humanistic arts, architecture, and scientific developments.",
-                    source: "佛羅倫斯烏菲茲美術館 / Uffizi Galleries, Florence"
-                },
-                {
-                    question: "義大利人對咖啡（Caffè）有著近乎固執的熱愛，並發明了濃縮咖啡。請問「Espresso」這個字在義大利文的原意是什麼？ / What does the Italian word 'Espresso' literally mean in relation to how it is made?",
-                    options: ["快速的 / Fast and quick", "壓力壓擠出的 / Pressed out (under pressure)", "黑色的 / Pure black and dense", "香濃的 / Aromatic and flavorful"],
-                    correctIndex: 1,
-                    explanation: "Espresso 源自義大利動詞 esprimere（壓出 / 壓榨）。Espresso 指的是「用熱水高壓快速壓榨、萃取出的咖啡」。 / Espresso comes from the past participle of the Italian verb 'esprimere', meaning 'to press out'. It refers to coffee brewed rapidly under high water pressure.",
-                    source: "義大利國家濃縮咖啡研究所 / Italian National Espresso Institute (INEI)"
-                },
-                {
-                    question: "義大利國土內有著極為獨特的地理奇觀。請問，在義大利領土「內部」，完全被其國境包圍的「國中國（Enclave Countries）」共有哪兩個？ / Italy surrounds two independent microstates within its borders. What are these two enclave countries?",
-                    options: ["摩納哥與安道爾 / Monaco & Andorra", "梵蒂岡與聖馬利諾 / Vatican City & San Marino", "列支敦斯登與馬爾他 / Liechtenstein & Malta", "盧森堡與塞波加 / Luxembourg & Seborga"],
-                    correctIndex: 1,
-                    explanation: "義大利包圍了兩個完全獨立的主權國家：世界上最小的國家梵蒂岡（Vatican City），以及世界上最古老共和國之一的聖馬利諾（San Marino）。 / Italy contains two sovereign landlocked enclaves within its territory: Vatican City, the spiritual heart of Catholicism, and San Marino, founded in 301 AD.",
-                    source: "義大利外交與國際合作部 / Ministry of Foreign Affairs and International Cooperation, Italy"
-                },
-                {
-                    question: "達文西極其珍貴的壁畫傑作《最後的晚餐》（The Last Supper）至今仍被完整保留在義大利哪一個城市的聖瑪利亞感恩教堂內？ / Leonardo da Vinci's mural masterpiece 'The Last Supper' is preserved in which Italian city?",
-                    options: ["羅馬 / Rome", "米蘭 / Milan", "佛羅倫斯 / Florence", "杜林 / Turin"],
-                    correctIndex: 1,
-                    explanation: "這幅不朽的巨作自 1490 年代起就畫在米蘭聖瑪利亞感恩修道院（Santa Maria delle Grazie）食堂的牆壁上，成功躲過了大戰空襲的破壞。 / Da Vinci painted his masterpiece on the refectory wall of the Convent of Santa Maria delle Grazie in Milan between 1495 and 1498.",
-                    source: "米蘭文化遺產與景觀局 / Ministry of Cultural Heritage and Activities, Milan Office"
-                },
-                {
-                    question: "義大利著名的「威尼斯狂歡節」（Carnival of Venice）以其色彩繽紛、雕工精細的面具聞名。請問在歷史上，狂歡節面具最初起到了何種關鍵社會功用？ / Historically, what was the primary social function of masks during the Carnival of Venice?",
-                    options: ["模糊不同社會階級與財富的界限，讓所有市民在節日中完全平等 / To erase social class, wealth, and gender distinctions, promoting absolute temporary equality", "防範中世紀猖獗的黑死病和有毒空氣 / Protection against the medieval Black Death and toxic air", "作為戲劇演員表演即興喜劇時的固定道具 / Acting as standard props for professional Commedia dell'arte stage actors", "用作徵稅官辨識逃稅商人的特殊標記 / Used as tax markers for tax collectors to spot merchants"],
-                    correctIndex: 0,
-                    explanation: "中世紀威尼斯社會等級嚴森。面具允許平民、貴族乃至神職人員隱藏真實身份，模糊階級與道德約束，一同狂歡，起到了維持社會平衡的關鍵作用。 / Venetian society was highly hierarchical. The mask suspended class, gender, and social status, allowing citizens to mingle, play, and express opinions anonymously.",
-                    source: "威尼斯市政博物館基金會 / Fondazione Musei Civici di Venezia"
-                },
-                {
-                    question: "羅馬著名的「特雷維噴泉」（Trevi Fountain，俗稱許願池）。請問，根據當地傳說，遊客必須如何向水池投擲硬幣，才能保證自己未來一定能重返羅馬？ / According to Roman legend, how should a visitor throw a coin into the Trevi Fountain to guarantee a return to Rome?",
-                    options: ["用右手越過左肩膀向後投擲 / Using your right hand to throw it over your left shoulder", "閉上雙眼並用雙手向前投擲 / Closing your eyes and throwing it forward with both hands", "在正午12點站在池中央拋擲 / Standing at the center of the fountain at noon and dropping it", "與伴侶手牽手一同扔入水底 / Tossing it together while holding hands with your lover"],
-                    correctIndex: 0,
-                    explanation: "古老的羅馬傳說指出，若能用「右手越過左肩」向後將一枚硬幣投入特雷維噴泉，便能保證一生中必定會重返羅馬。投兩枚會帶來真愛，投三枚則會帶來婚姻。 / The legendary ritual states that if you throw a coin from your right hand over your left shoulder with your back turned to the fountain, you will return to Rome one day.",
-                    source: "羅馬市觀光局 / Roma Capitale - Dipartimento Turismo"
-                },
-                {
-                    question: "義大利文學巨匠但丁（Dante Alighieri）在被流放期間，用意大利俗語（而非拉丁語）創作了文學史上最偉大的史詩。請問這部史詩是？ / Which epic poem, written in the Tuscan vernacular by Dante during his exile, is considered one of the greatest masterpieces of world literature?",
-                    options: ["《神曲》 / The Divine Comedy (Divina Commedia)", "《十日談》 / The Decameron", "《奧德賽》 / The Odyssey", "《君王論》 / The Prince"],
-                    correctIndex: 0,
-                    explanation: "但丁在《神曲》中描述了自己遊歷地獄（Inferno）、煉獄（Purgatorio）和天堂（Paradiso）的幻想旅程。這部史詩對現代義大利語的形成起到了奠基性作用。 / Dante's 'Divine Comedy' established the Tuscan dialect as the standard Italian literary language, bridging medieval theology and Renaissance humanism.",
-                    source: "佛羅倫斯但丁學會 / Società Dantesca Italiana"
-                },
-                {
-                    question: "埃特納火山（Mount Etna）是世界上最活躍的活火山之一，也是歐洲著名的滑雪與遠足勝地。請問它坐落於義大利的哪一個大型島嶼上？ / Mount Etna, one of the world's most active volcanoes, is located on which Italian island?",
-                    options: ["薩丁尼亞島 / Sardinia", "西西里島 / Sicily", "卡布里島 / Capri", "厄爾巴島 / Elba"],
-                    correctIndex: 1,
-                    explanation: "埃特納火山位於義大利最南端的西西里島東海岸，海拔約3,326公尺。在2013年它被列入聯合國教科文組織世界自然遺產名錄。 / Mount Etna is situated on the island of Sicily. Its constant activity has shaped unique soil conditions, making the lower slopes highly fertile for vineyards.",
-                    source: "聯合國教科文組織世界遺產中心 / UNESCO World Heritage Centre"
-                },
-                {
-                    question: "威尼斯傳統的窄身尖頭平底小船「貢多拉」（Gondola），在現代全部被漆成黑色。請問，這個優雅卻略顯肅穆的單一顏色，最初是因為何種歷史緣故？ / Why are all traditional Venetian gondolas officially painted entirely black today?",
-                    options: ["威尼斯元老院於1633年頒布法令限制貴族之間的奢華攀比 / A 1633 Venetian Senate decree to curb extravagance and vanity among rival nobles", "黑色油漆塗料在當時具有最好的防蟲防潮防霉效果 / Black tar was the only effective water-proofing and anti-rot sealant available", "為了悼念中世紀黑死病死難者的全國性舉哀哀悼 / A nationwide mourning tribute to the victims of the historical Black Death", "為了讓小船在夜間能不被敵軍發現偷襲 / To keep the boats camouflaged from enemies during night patrols"],
-                    correctIndex: 0,
-                    explanation: "16-17世紀威尼斯貴族富商極盡奢華，用絲綢和鍍金裝飾自己的貢多拉來炫耀財富。為了制止這種無序攀比，威尼斯共和國元老院頒布法令，規定所有貢多拉除特殊禮儀外，必須漆成一律的素黑色。 / During the Renaissance, wealthy Venetians vied to build the most colorful and gilded gondolas. To stop this costly vanity war, the Venetian Senate mandated that all public gondolas be painted a uniform black.",
-                    source: "威尼斯貢多拉同業公會 / Associazione Gondolai di Venezia"
-                },
-                {
-                    question: "義大利克雷莫納（Cremona）在中世紀誕生了如斯特拉迪瓦里（Stradivari）等製琴家族，他們製作的小提琴至今被視為無價之寶。請問，他們的琴聲之所以無與倫比，現代科學家推測原因不包括以下哪項？ / Cremona is famous for Stradivarius violins. Scientists speculate which of the following is NOT a reason for their peerless sound quality?",
-                    options: ["木材曾浸泡於含有硼砂、鉻與明礬的水中以防蟲防霉 / The wood was chemically treated with borax, chromium, and alum to prevent rot", "「小冰期」氣候使得當時的雲杉木生長極其緩慢，年輪細密且均勻 / The 'Little Ice Age' caused extremely slow, tight, and uniform tree ring growth", "小提琴的琴漆中混入了真正的黃金粉末與珍珠微粒 / The varnish was infused with actual gold dust and pearl micro-particles", "製琴大師對提琴拱形弧度與木材厚度的極致精確手工調校 / Master luthiers' exceptionally precise micro-tuning of wood thickness"],
-                    correctIndex: 2,
-                    explanation: "科學分析指出，斯特拉迪瓦里琴優美的音色源於極致均勻的木材密度（小冰期緩慢生長的雲杉）與預先浸泡礦物質防蟲的化學處理，但琴漆中並沒有黃金或珍珠粉末。 / Scientific research attributes the Stradivarius sound to tight-growth spruce, chemical mineral preservation, and superb hand-carving geometry, but not to precious metals or gold dust in the varnish.",
-                    source: "克雷莫納國際小提琴博物館 / Museo del Violino, Cremona"
-                },
-                {
-                    question: "義大利著名跑車巨擘「法拉利」（Ferrari）的黃底「躍馬」（Prancing Horse）標誌極具辨識度。請問這隻駿馬圖騰最初是來自於哪裡？ / Where did the famous 'Prancing Horse' logo of Ferrari originally come from?",
-                    options: ["一戰義大利傳奇王牌飛行員巴拉卡的飛機機身機徽 / The fuselage emblem of WWI Italian fighter ace Francesco Baracca", "美第奇家族騎士軍團的古老家族盾徽 / The medieval cavalry shield of the House of Medici", "馬拉內羅當地傳統的守護神圖騰 / The traditional animal patron saint of Maranello", "恩佐·法拉利年輕時贏得第一場賽車時的獎盃浮雕 / A relief on a trophy won by Enzo Ferrari in his first professional race"],
-                    correctIndex: 0,
-                    explanation: "這隻黑色的躍馬一戰時期噴在義大利頭號王牌飛行員巴拉卡（Francesco Baracca）的戰機上。巴拉卡犧牲後，其母親將這個幸運徽章贈送給恩佐·法拉利，建議他漆在賽車上以帶來好運。 / Enzo Ferrari was presented with the prancing horse emblem by the mother of Count Francesco Baracca, Italy's top fighter ace of WWI, who suggested putting the heroic horse on his cars for good luck.",
-                    source: "法拉利博物館歷史資料中心 / Museo Ferrari, Maranello"
-                },
-                {
-                    question: "米開朗基羅雕刻的文藝復興不朽巨作《大衛像》（David），其使用的大理石在當時其實有一段不尋常的歷史。請問這段歷史是？ / Michelangelo's masterpiece 'David' has an unusual material history. What is it?",
-                    options: ["這塊巨大的白色卡拉拉大理石因為有裂縫與瑕疵，曾被兩位雕刻家遺棄並閒置了40年 / The giant Carrara marble block had flaws and had been abandoned by other sculptors for 40 years", "這塊巨石是從古埃及神廟地基中偷偷運出的花崗岩 / The block was a piece of recycled Egyptian obelisk granite smuggled from Rome", "大衛的左手臂其實是由三塊完全不同的白色大理石拼接粘合而成的 / David's left arm was made from three completely different blocks of marble glued together", "這塊大理石是文藝復興教皇特別贈予美第奇家族的洗禮聖石 / The stone was a holy baptism rock gifted by the Pope to the Medici"],
-                    correctIndex: 0,
-                    explanation: "這塊巨石高達5公尺，因為有多個裂紋和孔洞，曾被另兩位大師認為無法雕刻而遺棄了近40年。26歲的米開朗基羅大膽接手，巧妙避開瑕疵，雕刻出驚豔世界的大衛。 / The massive block of Carrara marble was started by two other artists but abandoned as 'flawed'. Michelangelo took up the challenge of carving the David from this single, difficult block in 1501.",
-                    source: "佛羅倫斯美術學院美術館 / Accademia Gallery, Florence"
-                },
-                {
-                    question: "義大利皮埃蒙特和托斯卡尼大區出產極其珍貴的「白松露」（White Truffles），價格高達每公斤數千歐元。請問傳統上，當地松露獵人主要依靠什麼動物來尋找埋在落葉下的松露？ / Italian White Truffles are highly prized. Traditionally, what animals did truffle hunters rely on to locate these underground treasures?",
-                    options: ["經過專門訓練的狗 / Specially trained dogs", "天生對松露性費洛蒙極度敏感的母豬 / Female pigs highly sensitive to truffle pheromones", "視覺極其敏銳的馴服金雕 / Tamed golden eagles with keen vision", "能在落葉下打洞的非洲獴 / Burrowing African mongooses"],
-                    correctIndex: 0,
-                    explanation: "雖然母豬對松露天生敏感，但牠們找到後常會將松露直接吃掉，且會破壞地表植被與根系。因此，現代義大利松露獵人多改用經過專業訓練、服從性極高的「松露犬」來尋找。 / While pigs were used historically, they tend to damage forest roots and eat the valuable truffles. Modern Italian hunters almost exclusively use trained dogs (like Lagotto Romagnolo).",
-                    source: "義大利國家松露研究中心 / National Centre for Truffle Studies, Italy"
-                }
-            ],
-            '墨西哥': [
-                {
-                    question: "在墨西哥著名的傳統節日「亡靈節」（Día de los Muertos）中，人們相信逝者會循著哪一種代表性花卉的氣味與色彩重返人間？ / During Mexico's famous 'Day of the Dead' festival, people believe the deceased return to the living world guided by the scent and vibrant color of which iconic flower?",
-                    options: ["萬壽菊 / Marigolds", "紅玫瑰 / Red Roses", "白百合 / White Lilies", "向日葵 / Sunflowers"],
-                    correctIndex: 0,
-                    explanation: "萬壽菊在墨西哥被稱為「亡者之花」，其鮮艷亮麗的橙色與強烈香氣，被認為能引導亡靈回到家人身邊的祭壇。 / Marigolds (cempasúchil) are known as the 'flower of the dead'. Their bright orange colors and pungent scent are believed to guide souls back to their altars.",
-                    source: "聯合國教科文組織非物質文化遺產 / UNESCO Intangible Cultural Heritage"
-                },
-                {
-                    question: "墨西哥是許多我們日常食材的發源地。請問，以下哪一種風靡全球的甜點原料「起源於墨西哥」並曾被阿茲特克人視為神聖的飲料？ / Which globally popular sweet ingredient 'originated in Mexico' and was once consumed as a sacred, bitter beverage by the Aztecs?",
-                    options: ["咖啡 / Coffee", "巧克力（可可） / Chocolate (Cocoa)", "蔗糖 / Cane sugar", "肉桂 / Cinnamon"],
-                    correctIndex: 1,
-                    explanation: "可可豆原產於中美洲，阿茲特克與馬雅人將其磨成粉加上香料調配成苦澀的飲料。阿茲特克人甚至將可可豆當作貨幣使用。 / Cocoa beans are native to Mesoamerica. Aztecs and Mayans consumed it as a bitter, spiced beverage called 'Xocolatl', and even used cocoa beans as a currency.",
-                    source: "墨西哥國立人類學博物館 / National Museum of Anthropology, Mexico"
-                },
-                {
-                    question: "著名的馬雅遺跡奇琴伊察（Chichen Itza）有一座巨大的「庫庫爾坎金字塔」（El Castillo）。每當春分或秋分時，金字塔在陽光折射下會呈現何種奇特的視覺景觀？ / The Maya ruins of Chichen Itza feature the famous pyramid of Kukulkan. During spring and autumn equinoxes, what optical illusion is created on the pyramid?",
-                    options: ["一隻巨大的羽蛇神幻影沿著階梯緩緩爬行下山 / A giant feathered serpent shadow slithering down the staircase", "金字塔頂端散發出金色的神聖光柱 / A beam of golden light shooting upwards from the temple summit", "神廟主體在陽光與陰影下呈現出馬雅太陽曆圓盤 / The temple walls casting shadows resembling a Mayan Solar Calendar disc", "金字塔四周出現彩虹包圍的聖光圈 / A circular rainbow halo surrounding the entire pyramid"],
-                    correctIndex: 0,
-                    explanation: "馬雅人擁有精準的建築與天文知識。金字塔的階梯邊緣在春秋分時的斜照陽光下，會將北側梯面投射出波浪狀陰影，與底部的雕刻蛇頭相連，形成羽蛇神（Kukulkan）降臨大地的奇觀。 / Mayan architects demonstrated deep astronomical knowledge. At the equinoxes, the setting sun casts a shadow that resembles a slithering feathered serpent moving down the northern staircase to join a stone serpent head.",
-                    source: "墨西哥國家人類學與歷史局 / National Institute of Anthropology and History (INAH)"
-                },
-                {
-                    question: "在墨西哥尤卡坦半島，分布著數千個由石灰岩地表塌陷形成的天然地下淡水蓄水池，這在馬雅文明中被視為通往神界的神聖通道。請問這種地形的英文是？ / In the Yucatan Peninsula, thousands of natural water-filled sinkholes formed in limestone are sacred gateways for Mayans. What is the English term for these geological features?",
-                    options: ["天然井 / Cenote", "熱泉 / Geyser", "喀斯特溶洞 / Karst Cave", "沉落火山口 / Caldera"],
-                    correctIndex: 0,
-                    explanation: "這種塌陷天然井被稱為 Cenote（來自馬雅語 dzonot，意為水井）。由於半島幾乎沒有地上河流，這些地下井是馬雅人最主要的淡水來源，也常被用於進行祭祀儀式。 / These sinkholes are called Cenotes (from Mayan 'dzonot'). Lacking rivers on the peninsula, cenotes provided the primary freshwater source and were also used as sacred sites for religious offerings.",
-                    source: "墨西哥國家水資源委員會 / National Water Commission (CONAGUA)"
-                },
-                {
-                    question: "墨西哥擁有一種原產於霍奇米爾科湖（Lake Xochimilco），以擁有驚人器官再生能力（甚至能再生部分大腦）而聞名全球的粉紅色「美西螈」（六角恐龍）。牠們在野外正面臨嚴重的絕種危險。請問牠們屬於哪一類動物？ / Mexico is home to the axolotl, famous for its incredible regenerative abilities. Endangered in the wild, which animal class do they belong to?",
-                    options: ["兩棲類（有尾目） / Amphibians (Caudata)", "爬蟲類（蜥蜴亞目） / Reptiles (Lacertilia)", "魚類（肺魚綱） / Fish (Dipnoi)", "哺乳類（單孔目） / Mammals (Monotremata)"],
-                    correctIndex: 0,
-                    explanation: "美西螈（Axolotl，學名 Ambystoma mexicanum）屬於兩棲綱有尾目蠑螈科。牠們具有「幼態延續」特徵，終其一生都保持水生形體形態，並用羽狀腮呼吸。 / Axolotls are amphibians belonging to the order Caudata. They exhibit neoteny, meaning they reach adulthood without undergoing metamorphosis, keeping their aquatic larval features and feathery external gills forever.",
-                    source: "世界自然保護聯盟紅色名錄 / IUCN Red List of Threatened Species"
-                },
-                {
-                    question: "墨西哥城北方不遠處有座古代印地安大都市「特奧蒂瓦坎」（Teotihuacan）。請問這座古城內沿著「亡者大道」豎立、最雄偉的兩座大型階梯狀金字塔分別是什麼？ / Just north of Mexico City lies the ancient city of Teotihuacan. Which two massive pyramids are the most iconic structures in this archaeological zone?",
-                    options: ["太陽金字塔與月亮金字塔 / Pyramid of the Sun & Pyramid of the Moon", "羽蛇神金字塔與庫庫爾坎金字塔 / Temple of the Feathered Serpent & El Castillo", "胡夫金字塔與哈夫拉金字塔 / Pyramid of Khufu & Pyramid of Khafre", "大祭司金字塔與美洲豹金字塔 / Temple of the High Priest & Temple of the Jaguar"],
-                    correctIndex: 0,
-                    explanation: "特奧蒂瓦坎古城全盛於西元1-5世紀，擁有宏偉的「太陽金字塔」與「月亮金字塔」，兩者隔著貫穿全城的亡者大道互相呼應。 / Teotihuacan is home to the Pyramid of the Sun (one of the largest in the Western Hemisphere) and the smaller but highly elegant Pyramid of the Moon at the end of the Avenue of the Dead.",
-                    source: "聯合國教科文組織世界遺產中心 / UNESCO World Heritage Centre"
-                },
-                {
-                    question: "墨西哥傳奇女畫家弗里達·卡羅（Frida Kahlo）的自畫像與大膽色彩聞名世界。請問她在自畫像中，最為標誌性且常用來挑戰傳統女性美學觀念的面部特徵是什麼？ / Frida Kahlo is famous for her self-portraits. Which prominent facial feature did she emphasize to challenge traditional standards of feminine beauty?",
-                    options: ["濃密且連在一起的一字眉（一字眉） / A dark, connected unibrow", "深藍色且極長的眼睫毛 / Exceptionally long dark blue eyelashes", "臉頰上點綴的傳統墨西哥彩繪花紋 / Traditional face paint on her cheeks", "幾何線條般對稱的鮮紅色厚唇 / Symmetrical geometric bright red lips"],
-                    correctIndex: 0,
-                    explanation: "弗里達一生飽受身體折磨，她的自畫像不加修飾地刻畫了自己的「一字眉」與上唇唇毛，拒絕對主流女性美學妥協，成為女權主義與個人主義的永恆標誌。 / Frida Kahlo proudly emphasized her unibrow and faint mustache in her self-portraits, utilizing raw, uncompromising depictions to redefine cultural and gender aesthetics.",
-                    source: "墨西哥弗里達·卡羅博物館（藍屋） / Frida Kahlo Museum (The Blue House)"
-                },
-                {
-                    question: "墨西哥一道歷史悠久的愛國名菜「核桃醬灌辣椒」（Chiles en nogada）。它由青辣椒、白色的核桃奶油醬與紅色的石榴籽拼成。請問這三種顏色在歷史上象徵了什麼？ / The patriotic Mexican dish 'Chiles en nogada' features green chiles, white walnut sauce, and red pomegranate seeds. What do these three colors represent?",
-                    options: ["墨西哥國旗的三色 / The three colors of the Mexican flag", "馬雅曆法的三個太陽紀 / The three solar cycles of the Maya calendar", "墨西哥天主教的三聖節 / The three holy days of Catholic Mexico", "美洲三大古文明的融合 / The blending of three ancient Mesoamerican civilizations"],
-                    correctIndex: 0,
-                    explanation: "這道菜創立於1821年墨西哥獨立戰爭結束時。綠色代表獨立，白色代表純潔的天主教信仰，紅色代表人民的和諧團結，正好對應墨西哥國旗的三色。 / Created in Puebla in 1821 to honor Independence general Agustín de Iturbide, the green poblano pepper, white walnut cream, and red pomegranate mirror the colors of the army's flag, which became Mexico's national flag.",
-                    source: "墨西哥國家文化和藝術委員會 / National Council for Culture and the Arts, Mexico"
-                },
-                {
-                    question: "在 1521 年西班牙征服之前，強大的阿茲特克帝國首都建在一片大型湖泊中央的島嶼上，名為「特諾奇蒂特蘭」（Tenochtitlan）。請問這座湖中帝國之城的原址就是現今墨西哥的哪一個城市？ / Before the Spanish conquest, the Aztec capital Tenochtitlan was built on an island in Lake Texcoco. Which modern city stands on its ruins today?",
-                    options: ["瓜達拉哈拉 / Guadalajara", "坎昆 / Cancún", "墨西哥城 / Mexico City", "蒙特雷 / Monterrey"],
-                    correctIndex: 2,
-                    explanation: "西班牙征服者科爾特斯摧毀了特諾奇蒂特蘭，並排乾了特斯科科湖，在原址地基上建立起新西班牙首府，即今天的墨西哥城（Mexico City）。 / Mexico City was built directly over the ruins of the conquered Aztec capital of Tenochtitlan. Today, Aztec ruins like the Templo Mayor lie right next to the city's main square, the Zócalo.",
-                    source: "墨西哥國家人類學和歷史研究所 / INAH Mexico"
-                },
-                {
-                    question: "墨西哥著名的蒸餾烈酒「龍舌蘭酒」（Tequila）享譽全球。請問根據墨西哥法律規定，正宗的 Tequila 必須主要使用哪一種植物的「鱗莖（心）」發酵蒸餾而成？ / True Tequila is highly regulated. According to Mexican law, it must be distilled from which specific plant species?",
-                    options: ["藍色龍舌蘭（Blue Agave） / Blue Agave (Agave tequilana)", "野生仙人掌 / Wild Saguaro Cactus", "熱帶劍麻 / Tropical Sisal Hemp", "野生蘆薈 / Organic Aloe Vera"],
-                    correctIndex: 0,
-                    explanation: "墨西哥法規嚴格限定，只有使用特定產區內、至少生長7-10年的「藍色龍舌蘭（Agave tequilana 'Weber'）」鱗莖（稱為 piña）為原料所釀造的，才能合法標示為 Tequila。 / Under Mexican DO laws, Tequila must be produced in Jalisco and limited regions from 100% Blue Agave. The core of the plant, the piña, is harvested, baked, and fermented.",
-                    source: "墨西哥龍舌蘭監管委員會 / Tequila Regulatory Council (CRT)"
-                },
-                {
-                    question: "每年冬天，數億隻「黑脈金斑蝶」（Monarch Butterflies）會完成長達數千公里的不可思議空中遷徙，集體聚集在墨西哥中部的溫帶森林裡避冬。請問牠們遷徙的出發地是？ / Every winter, hundreds of millions of Monarch Butterflies migrate to central Mexican forests. Where do they start this incredible journey from?",
-                    options: ["美國和加拿大南部地區 / United States & Southern Canada", "南美洲巴塔哥尼亞高原 / Patagonian Highlands, South America", "亞馬遜熱帶雨林深處 / Deep Amazon Rainforest", "古巴等加勒比海群島 / Cuba and Caribbean islands"],
-                    correctIndex: 0,
-                    explanation: "這是自然界最驚人的遷徙。大斑蝶從加拿大和美國北部出發，飛行高達4,500公里，精確抵達墨西哥米卻肯州的松林中集體避冬。 / The Monarch butterfly migration is a spectacular biological event. Butterflies travel thousands of miles from North America to reach the Monarch Butterfly Biosphere Reserve in Mexico.",
-                    source: "世界自然基金會墨西哥分會 / WWF Mexico"
-                },
-                {
-                    question: "可愛風靡全球的「吉娃娃」（Chihuahua）是世界上最小的犬種之一。請問吉娃娃的名字由來是什麼？ / The Chihuahua is the smallest dog breed in the world. What is the origin of their name?",
-                    options: ["原產自墨西哥北部的「奇瓦瓦州」（Chihuahua） / Named after the Mexican state of Chihuahua where they were discovered", "阿茲特克語中意為「口袋裡的狼」 / Aztec word meaning 'pocket-sized wolf'", "19世紀發明此犬種的墨西哥繁殖大師名字 / The surname of the master dog breeder who created the breed", "馬雅神話中守護冥界入口的小神獸 / A small mythical beast guarding the underworld in Maya myths"],
-                    correctIndex: 0,
-                    explanation: "吉娃娃原產自墨西哥北部的奇瓦瓦州（Chihuahua），於 19 世紀中葉被探險家發現並傳入世界各地，其祖先可追溯到前哥倫布時期的科技契犬（Techichi）。 / The breed is named after the Mexican state of Chihuahua, where these tiny dogs were discovered in the mid-19th century. They are descendants of ancient Mesoamerican companion dogs.",
-                    source: "墨西哥犬業協會 / Federación Canófila Mexicana (FCM)"
-                },
-                {
-                    question: "墨西哥傳統的「流浪音樂」（Mariachi）常在婚禮和節日中演奏。請問下列哪一項樂器是 Mariachi 樂團中極具特色、體積龐大且呈拱背狀的「大貝斯吉他」？ / What is the name of the deep-bodied, convex-backed bass guitar that provides the rhythmic foundation of a Mexican Mariachi band?",
-                    options: ["吉他隆（Guitarrón） / Guitarrón", "比維拉琴（Vihuela） / Vihuela", "班卓琴 / Banjo", "曼陀林 / Mandolin"],
-                    correctIndex: 0,
-                    explanation: "Guitarrón（吉他隆）是一款巨大的拱背木吉他，沒有琴格，主要用來彈奏低音聲部，與體積較小、呈拱背五弦的 Vihuela 琴一同構成 Mariachi 的核心節奏。 / The Guitarrón is a large, deep-bodied acoustic bass guitar with 6 strings, traditionally plucked in octaves to provide the primary bass line for Mariachi ensembles.",
-                    source: "墨西哥國家藝術與文化秘書處 / Secretariat of Culture, Mexico"
-                },
-                {
-                    question: "科學界普遍認為，大約在 6600 萬年前，一顆巨大行星撞擊了墨西哥尤卡坦半島，留下了「希克蘇魯伯隕石坑」（Chicxulub Crater），這導致了包括恐龍在內的大量地球生物滅絕。請問這顆撞擊地球的隕石直徑大約有多大？ / Scientists agree a massive asteroid impact at Chicxulub in Mexico wiped out the dinosaurs 66 million years ago. What was the estimated diameter of this asteroid?",
-                    options: ["約 10 公里 / Around 10 kilometers", "約 100 公尺 / Around 100 meters", "約 100 公里 / Around 100 kilometers", "約 500 公里 / Around 500 kilometers"],
-                    correctIndex: 0,
-                    explanation: "科學家估計，這顆隕石直徑約為 10 到 15 公里，撞擊釋放出的能量相當於 100 萬億噸 TNT 炸藥，引發了全球性的氣候劇變、森林大火與漫長的「撞擊寒冬」。 / The Chicxulub impactor was an asteroid estimated to be about 10 kilometers (6.2 miles) in diameter, creating a crater 150 km wide and triggering global mass extinction.",
-                    source: "墨西哥國立自治大學地球物理研究所 / Institute of Geophysics, UNAM"
-                },
-                {
-                    question: "阿茲特克人在特斯科科湖淺水區發明了一種高產的「浮動花園（或稱人工浮島農田）」農業耕作技術，極大支撐了帝國首都的大量人口。這種古老工法的西班牙文是？ / Aztecs invented an highly productive agricultural system of artificial floating agricultural islands. What is the Spanish name for these fields?",
-                    options: ["奇南帕（Chinampa） / Chinampas", "莊園（Hacienda） / Haciendas", "大莊園制 / Latifundia", "梯田工法 / Terrazas"],
-                    correctIndex: 0,
-                    explanation: "Chinampas（奇南帕）是利用湖底淤泥、乾草與蘆葦交互堆疊成的矩形人工島。在島嶼邊緣種植柳樹（Ahuejote）以樹根固定邊緣，實現一年多熟的驚人高產量。 / Chinampas are rectangular raised agricultural beds built on shallow lake beds. It is one of the most efficient sustainable agricultural systems ever designed by humans.",
-                    source: "聯合國糧食及農業組織全球重要農業文化遺產 / FAO GIAHS site"
-                },
-                {
-                    question: "位於墨西哥北部的「銅谷」（Copper Canyon，西班牙文 Barrancas del Cobre）。請問它在自然地理上有何壯麗的歐洲或世界級紀錄？ / How does the copper canyon system in northern Mexico compare to the US Grand Canyon?",
-                    options: ["它的規模與深度其實比美國科羅拉多大峽谷「更深且更寬廣」 / It is actually deeper and larger in overall canyon area than the US Grand Canyon", "它是全球唯一的活動型地裂峽谷 / It is the only active rift canyon on Earth", "它是美洲大陸唯一完全被溫帶落葉林覆蓋的峽谷 / It is the only canyon in the Americas fully covered by deciduous forests", "它的底部流淌著世界上含銅量最高、呈亮藍色的河流 / Its bottom floor features the world's most copper-dense bright blue river"],
-                    correctIndex: 0,
-                    explanation: "銅谷是由六個大峽谷組成的龐大峽谷群，因岩壁呈銅綠色而得名。其總面積約是科羅拉多大峽谷的四倍，部分谷底深度更深。 / The Copper Canyon is a series of six distinct canyons in the Sierra Madre Occidental. Taken together, the canyon system is deeper and larger than the US Grand Canyon.",
-                    source: "墨西哥旅遊部 / SECTUR Mexico"
-                },
-                {
-                    question: "墨西哥人對體育充滿熱情。請問，被墨西哥聯邦法律正式確立為該國「國技（National Sport）」的傳統馬術運動是什麼？ / Which traditional equestrian sport is officially declared the 'National Sport' of Mexico?",
-                    options: ["沙羅馬術運動（Charrería） / Charrería", "自由摔角（Lucha Libre） / Lucha Libre", "美洲原住民蹴球 / Purépecha Ballgame", "古典鬥牛 / Bullfighting"],
-                    correctIndex: 0,
-                    explanation: "Charrería 是一項源於墨西哥傳統牧場莊園生活、融合精湛馬術與繩套套牛技術的體育競賽。男騎手（Charro）身穿經典的寬簷帽與華麗套服，展現非凡勇氣。 / Charrería is the national sport of Mexico, dating back to 16th-century haciendas. In 2016, it was inscribed on UNESCO's Representative List of Intangible Cultural Heritage.",
-                    source: "墨西哥國家體育委員會 / National Commission for Physical Culture and Sport (CONADE)"
-                },
-                {
-                    question: "墨西哥著名的「自由摔角」（Lucha Libre），選手們多戴著色彩斑斕的特製面具。請問在摔角規則中，對 Lucha Libre 選手來說，最大的恥辱與最終的戰敗是什麼？ / In Mexican Lucha Libre wrestling, what is considered the ultimate loss and greatest dishonor for a masked wrestler?",
-                    options: ["面具在擂台比試中被對手強行揭下 / Having their mask forcibly removed or losing a 'mask vs. hair' match", "在5秒內無法站立起 / Being pinned down for more than 5 seconds", "被裁判判定惡意使用手部犯規 / Committing a technical foul using hands", "拒絕與對手在賽後握手致敬 / Refusing to shake hands after the match"],
-                    correctIndex: 0,
-                    explanation: "面具（Máscara）在 Lucha Libre 中極為神聖，代表了選手的靈魂與尊嚴。在一生中，若在『面具對決（Lucha de Apuestas）』中落敗被揭下面具，選手將必須公開真實姓名，且終生不得再戴上面具參賽。 / The mask is sacred in Lucha Libre. In the high-stakes 'Luchas de Apuestas', losers are unmasked on live TV, which is the ultimate, irreversible downfall of a Luchador.",
-                    source: "墨西哥城摔角委員會 / Commission of Professional Lucha Libre, Mexico City"
-                },
-                {
-                    question: "墨西哥人發明的熱巧克力（Mexican Hot Chocolate）享譽世界。傳統上，墨西哥人在沖泡熱巧克力時，除了使用可可，一定會加入哪兩項標誌性的調味香料？ / Traditional Mexican hot chocolate features which two signature spices added during preparation?",
-                    options: ["肉桂與辣椒粉 / Cinnamon & Chili powder", "香草與薄荷葉 / Vanilla & Peppermint leaves", "八角與生薑片 / Star Anise & Ginger slice", "小豆蔻與黑胡椒 / Cardamom & Black pepper"],
-                    correctIndex: 0,
-                    explanation: "墨西哥熱巧克力傳承自古阿茲特克的配方，加入在地香料肉桂，並伴隨一點點辣椒粉，用一種特製的木製攪拌棒（Molinillo）搓動攪拌出豐富起泡。 / Traditional Mexican chocolate is characterized by the addition of Ceylon cinnamon and sometimes ground chili pepper, creating a deeply complex, aromatic, and warming brew.",
-                    source: "墨西哥傳統烹飪保存學院 / Conservatory of Mexican Gastronomy"
-                },
-                {
-                    question: "我們日常烘焙與甜點中靈魂調味品「香草（Vanilla）」，在歷史上其實起源於墨西哥。請問在 19 世紀以前，香草之所以無法在歐洲等其他大陸成功結果繁衍，是因為牠們「高度依賴墨西哥當地的何種特有生物」進行授粉？ / Vanilla originated in Mexico. Historically, why did vanilla orchids fail to produce vanilla pods outside Mexico until the mid-19th century?",
-                    options: ["只有墨西哥當地的「美洲無針蜂」能為其修長的花筒進行授粉 / They relied exclusively on the tiny Mexican Melipona bees for pollination", "只有墨西哥當地的特有蜂鳥能其花瓣授粉 / They relied exclusively on a native Mexican hummingbird", "只有中美洲特有的吸蜜蝙蝠在夜間授粉 / They relied on a nocturnal nectar-feeding bat of Mexico", "只有尤卡坦半島特有的沙土陸龜踩踏其根莖刺激生長 / Its root systems required compression by the endemic Yucatan land tortoise"],
-                    correctIndex: 0,
-                    explanation: "香草蘭花（Vanilla orchid）的花朵結構十分獨特，只有墨西哥當地的美洲無針蜂（Melipona bee）能夠自然為其授粉。直到 1841 年一個留尼旺島黑奴發明了手動人工授粉法，香草才能在世界各地開花結果。 / The vanilla orchid has a unique anatomy. In its native Mexico, it is pollinated naturally only by the tiny Melipona bee. Outside Mexico, every single vanilla flower must be hand-pollinated.",
-                    source: "墨西哥農業與農村發展部 / Ministry of Agriculture and Rural Development, Mexico"
-                }
-            ],
-            '希臘': [
-                {
-                    question: "古希臘人舉辦「古代奧林匹克運動會」的最初目的，是為了向哪一位希臘神話中的眾神之王致敬？ / What was the primary purpose of the Ancient Olympic Games held by the ancient Greeks, which served to honor which King of the Gods in Greek mythology?",
-                    options: ["波塞頓 / Poseidon", "阿波羅 / Apollo", "宙斯 / Zeus", "哈得斯 / Hades"],
-                    correctIndex: 2,
-                    explanation: "古代奧林匹克運動會始於西元前 776 年，是在奧林匹亞舉辦的宗教與體育盛會，旨在崇敬和尊奉眾神之神宙斯。 / The Ancient Olympic Games, which began in 776 BC, were a religious and athletic festival held in Olympia to honor Zeus, the king of the Greek gods.",
-                    source: "希臘文化與體育部 / Ministry of Culture and Sports, Greece"
-                },
-                {
-                    question: "希臘擁有漫長的地中海海岸線。請問，希臘國土內大約散落了多少個美麗的島嶼（含無人島）？ / Greece features an extensive Mediterranean coastline. Approximately how many beautiful islands (including uninhabited ones) scatter its territory?",
-                    options: ["約 100 多個 / Around 100", "約 600 多個 / Around 600", "約 2,000 多個 / Around 2,000", "約 6,000 多個 / Around 6,000"],
-                    correctIndex: 3,
-                    explanation: "希臘群島星羅棋布，其領土內共有約 6,000 個島嶼與礁石，其中只有約 227 個島嶼有人類居住。 / The Greek territory comprises as many as 6,000 islands and islets scattered across the Aegean and Ionian Seas, of which only about 227 are inhabited.",
-                    source: "希臘國家旅遊局 / Greek National Tourism Organisation (GNTO)"
-                },
-                {
-                    question: "現代馬拉松比賽的精確標準距離為 42.195 公里。請問這項運動起源於希臘歷史上的哪一場關鍵戰役？ / The modern marathon standard distance of 42.195 kilometers originates from which historic battle in Greek history?",
-                    options: ["溫泉關戰役 / Battle of Thermopylae", "馬拉松戰役 / Battle of Marathon", "薩拉米斯海戰 / Battle of Salamis", "高加米拉戰役 / Battle of Gaugamela"],
-                    correctIndex: 1,
-                    explanation: "西元前490年，雅典軍隊在馬拉松平原擊敗波斯侵略軍。信使斐迪庇第斯（Pheidippides）不間斷奔跑約40公里返回雅典宣布捷報，隨後力竭倒地身亡。這成為馬拉松運動的起源。 / In 490 BC, Athenian forces defeated Persians at Marathon. Messenger Pheidippides ran approximately 40 km back to Athens to deliver news of victory, collapsed, and died of exhaustion, inspiring the modern race.",
-                    source: "希臘奧林匹克委員會 / Hellenic Olympic Committee"
-                },
-                {
-                    question: "雅典衛城上的帕德嫩神廟（Parthenon）在結構上隱藏了許多光學修正設計。請問，神廟周圍的石柱其實藏有何種令人驚嘆的光學巧思？ / The Parthenon in Athens contains subtle optical corrections in its structure. What incredible architectural trick is hidden in its columns?",
-                    options: ["所有石柱其實都微微向內傾斜，且柱身中部微凸（Entasis），以避免看起來下陷或向外張開 / All columns lean slightly inward and feature a central swelling (entasis) to prevent looking thin or curved", "石柱內部其實是空心的，並填入古老的避震軟木層 / The columns are actually hollow, filled with ancient shock-absorbing cork", "石柱頂部刻滿了用來反射陽光的晶瑩大理石碎晶 / The column capitals are encrusted with light-reflecting crystal marble dust", "石柱的高度從左到右逐漸升高以對應日落軌跡 / The height of the columns gradually increases to track the setting sun"],
-                    correctIndex: 0,
-                    explanation: "古希臘人深諳視覺差。如果石柱完全垂直且筆直，人類肉眼看起來會顯得柱子向外傾斜且柱中部凹陷。因此，建築師將每根石柱中段做微凸（稱為柱身凸起 Entasis），並使四周柱子微向內斜，使整體在視覺上呈現絕對的完美與端正。 / Greek master builders understood visual distortion. To prevent columns from appearing concave or outward-curving to the human eye, they curved the shafts slightly outwards (entasis) and sloped them inwards to make the overall structure look perfectly straight.",
-                    source: "希臘文化遺產部衛城修復局 / Acropolis Restoration Service"
-                },
-                {
-                    question: "希臘最高峰「奧林帕斯山」（Mount Olympus）海拔2,917公尺。除了在希臘神話中是眾神的家園外，它在自然科學上有何獨特的地位？ / Mount Olympus is the highest peak in Greece. Besides being the mythical home of the gods, what unique scientific status does it hold?",
-                    options: ["它是希臘第一個國家公園，擁有多達數十種獨特的高山特有植物與昆蟲 / It was Greece's first National Park, hosting dozens of unique endemic alpine plants and insects", "它是地中海地區唯一的永久冰河覆蓋山峰 / It is the only peak with permanent glacier coverage in the Mediterranean", "它是希臘境內唯一的休眠超大型火山 / It is the only dormant supervolcano located within Greek territory", "它是全歐洲海拔最高的生物多樣性自然保留區 / It is the highest biological reserve in the entire continent of Europe"],
-                    correctIndex: 0,
-                    explanation: "奧林帕斯山於1938年被指定為希臘第一個國家公園，隨後在1981年被列為聯合國生物圈保留區。它擁有極其豐富的生態多樣性，多種特有種植物僅在此處生長。 / Olympus was designated Greece's first National Park in 1938 and a UNESCO Biosphere Reserve in 1981, owing to its outstanding biodiversity which includes over 1,500 plant species, many endemic to this single mountain.",
-                    source: "聯合國教科文組織人與生物圈計劃 / UNESCO MAB Biosphere Reserves"
-                },
-                {
-                    question: "希臘著名的傳統特產「費塔起司」（Feta Cheese）在2002年獲得了歐盟原產地保護登記（PDO）。請問真正的 Feta 起司必須主要使用何種乳源製成？ / Greek Feta cheese received EU protected designation of origin (PDO) status in 2002. Genuine Feta must be primarily made from which milk?",
-                    options: ["綿羊奶（與少量山羊奶） / Sheep's milk (with a small portion of goat's milk)", "頂級水牛奶 / Premium buffalo milk", "在阿爾卑斯山放牧的氂牛乳 / Alpine yak milk", "在地純有機黃牛乳 / Local organic cow's milk"],
-                    correctIndex: 0,
-                    explanation: "歐盟法規嚴格規定，只有使用最少70%的綿羊奶與最多30%的山羊奶、並在希臘本土指定地區使用傳統方式製作的鹽漬白乾酪，才能合法冠上「Feta」名稱。 / According to EU law, authentic Feta cheese must be made using at least 70% sheep's milk and up to 30% goat's milk from specified regions of Greece, using traditional curing in brine.",
-                    source: "歐盟地理標誌保護系統 / European Commission Geographical Indications Register"
-                },
-                {
-                    question: "在希臘神話著名的「特洛伊戰爭」中，希臘人久攻不下特洛伊城。請問，獻出建造巨大的「特洛伊木馬」（Trojan Horse）假裝撤退、最終裡應外合攻破城門的關鍵智謀是誰提出的？ / In the Trojan War, who was the brilliant Greek mastermind behind the strategic concept of the giant Trojan Horse?",
-                    options: ["阿基里斯 / Achilles", "奧德修斯 / Odysseus", "阿伽門農 / Agamemnon", "海克力士 / Hercules"],
-                    correctIndex: 1,
-                    explanation: "智勇雙全的伊薩卡國王奧德修斯（Odysseus）想出了木馬計。希臘士兵藏在巨大木馬腹部，大部隊假裝撤退，特洛伊人將木馬當作祭祀海神的戰利品拖入城內，夜間希臘士兵爬出開城門，最終攻陷特洛伊。 / Odysseus, the king of Ithaca, devised the famous ruse of the wooden horse. His strategic cunning ended the 10-year siege of Troy, as immortalized in Homer's Odyssey.",
-                    source: "古典希臘文學荷馬史詩《奧德賽》 / Homer's Odyssey"
-                },
-                {
-                    question: "希臘字母表（Greek Alphabet）在西方文明史上具有奠基性的意義。請問，希臘字母的第一個字母「Alpha」與最後一個字母「Omega」，合起來在西方文化中常用來比喻什麼？ / The Greek alphabet is foundational. What does the combination of the first letter 'Alpha' and the last letter 'Omega' commonly metaphorically represent in Western culture?",
-                    options: ["事情的「起點與終點（全部）」 / The beginning and the end (the entirety of something)", "極限的高峰與低谷 / Extreme highs and lows of scientific data", "完美的秩序與無序的混亂 / Perfect order and absolute chaotic entropy", "海洋的潮汐漲落 / The rising and falling of ocean tides"],
-                    correctIndex: 0,
-                    explanation: "Alpha（Α）是第一個字母，Omega（Ω）是最後一個字母。在聖經和西方語境中，「從Alpha到Omega」被用來比喻一個事物「從頭到尾」或「宇宙萬物的全部與永恆」。 / As the first and last letters of the Greek alphabet, Alpha and Omega are used metaphorically to mean the beginning and the end, or the complete scope of an entire entity.",
-                    source: "牛津英語詞典語源學存檔 / Oxford English Dictionary"
-                },
-                {
-                    question: "希臘著名的火山島嶼「聖托里尼」（Santorini），以其建在懸崖邊、白牆藍頂的東正教教堂和絕美日落聞名世界。請問，這座島嶼獨特的新月形地貌是怎麼形成的？ / Santorini is famous for its blue-domed churches and crescent shape. How was this unique geography formed?",
-                    options: ["史前一次規模極其巨大的火山爆發導致島中央塌陷形成破火山口 / A catastrophic prehistoric volcanic eruption causing the island center to collapse into a caldera", "板塊劇烈碰撞使海底珊瑚礁向上垂直斷裂 / Tectonic compression forcing submarine coral reefs to uplift vertically", "冰河期結束冰川退縮割裂了原本完整的半島 / Glacial retreat carving through an originally complete peninsula after the Ice Age", "古代人工開鑿大型軍事港口的海上工程 / An ancient naval excavation project aimed at creating a deep defense harbor"],
-                    correctIndex: 0,
-                    explanation: "大約在西元前1600年，發生了人類歷史上最猛烈的「米諾斯火山爆發」之一。島嶼中央在爆炸中塌陷，海水湧入，留下了巨大的深水破火山口（Caldera）和新月形的陡峭邊緣島鏈。 / Santorini is the remnant of a massive volcanic caldera. Around 3,600 years ago, the Minoan eruption blew the center out of the island, creating its vertical cliffs and active volcano.",
-                    source: "希臘地質與礦產勘探研究所 / IGME Greece"
-                },
-                {
-                    question: "在現代醫學中，醫生在正式執業前都需要宣讀神聖的「希波克拉底誓詞」（Hippocratic Oath）。請問被譽為西方「醫學之父」的希波克拉底是古希臘哪一個島上的名醫？ / The famous Hippocratic Oath is taken by modern physicians. Hippocrates, the 'Father of Medicine', practiced on which Greek island?",
-                    options: ["科斯島 / Kos", "克里特島 / Crete", "羅德島 / Rhodes", "米科諾斯島 / Mykonos"],
-                    correctIndex: 0,
-                    explanation: "希波克拉底（西元前460-370年）誕生於科斯島（Kos）。他在島上創立了醫學校，將醫學與宗教神明懲罰分離，確立了「醫學是一門科學與道德職業」的崇高地位。 / Hippocrates was born on the island of Kos. He established medicine as a distinct profession and scientific discipline, separating it from mysticism and superstition.",
-                    source: "古典希臘醫學歷史文庫 / National Library of Medicine (NLM)"
-                },
-                {
-                    question: "古希臘人深信神諭。在當時被視為「世界中心（Omphalos）」、政治與文化地位崇高、人們前去聆聽太陽神阿波羅傳遞神諭的聖地在哪裡？ / In ancient Greece, which holy sanctuary was considered the 'center of the world' (Omphalos) where people went to consult the Oracle of Apollo?",
-                    options: ["德爾菲 / Delphi", "奧林匹亞 / Olympia", "斯巴達 / Sparta", "邁錫尼 / Mycenae"],
-                    correctIndex: 0,
-                    explanation: "德爾菲（Delphi）建在帕納塞斯山陡峭的懸崖上。阿波羅神廟的女祭司皮媞亞（Pythia）在此吸入地底氣體進入出神狀態，傳達阿波羅玄妙莫測的預言神諭，對古希臘各城邦決策具有決定性影響。 / Delphi was the sanctuary of Apollo, famous for Pythia, the high priestess who delivered enigmatic prophecies. It was geophysically marked as the navel (omphalos) of the Earth.",
-                    source: "希臘文化部德爾菲考古博物館 / Delphi Archaeological Museum"
-                },
-                {
-                    question: "在希臘中部色薩利平原上，有多座高聳、頂部建有東正教修道院的天然巨石柱。這些修道院被戲稱為「懸在空中」。請問這處壯麗的自然與文化雙遺產叫什麼名字？ / What is the name of the spectacular UNESCO World Heritage site in central Greece featuring medieval Eastern Orthodox monasteries perched atop towering sandstone rock pillars?",
-                    options: ["梅特歐拉 / Meteora", "阿索斯山 / Mount Athos", "德爾菲聖地 / Delphi Sanctuary", "米斯特拉斯 / Mystras"],
-                    correctIndex: 0,
-                    explanation: "Meteora 在希臘文的原意為「懸在空中」或「天空之城」。14世紀起，隱修士們為了躲避土耳其人的入侵，手工將物資拉吊上高聳險峻的砂岩柱頂，建造了24座鬼斧神工的修道院。 / Meteora means 'suspended in the air'. Six monasteries remain active today, built on natural sandstone rock pillars, historically accessible only by rope nets and windlasses.",
-                    source: "聯合國教科文組織世界遺產中心 / UNESCO World Heritage Centre"
-                },
-                {
-                    question: "在希臘最大島嶼克里特島（Crete）上，發掘出了青銅時代「米諾斯文明」的克諾索斯王宮（Palace of Knossos）。請問在希臘神話中，這座結構極其複雜的王宮傳說是哪一隻怪物的迷宮？ / The Palace of Knossos on Crete is the center of Minoan Civilization. In myth, this palace was the site of the labyrinth containing which legendary beast?",
-                    options: ["米諾陶洛斯（牛頭人身獸） / Minotaur", "美杜莎（蛇髮女妖） / Medusa", "九頭蛇（許德拉） / Hydra", "地獄三頭犬（刻耳柏洛斯） / Cerberus"],
-                    correctIndex: 0,
-                    explanation: "傳說米諾斯國王下令工匠建造了結構無比複雜的迷宮，用來關押王后產下的半人半牛怪物「米諾陶洛斯」（Minotaur），每年要求雅典進貢童男童女，最終被英雄忒修斯斬殺。 / In mythology, King Minos confined the Minotaur—a creature with the head of a bull and body of a man—in a labyrinth designed by Daedalus. It was eventually slain by Theseus.",
-                    source: "克里特島伊拉克利翁考古博物館 / Heraklion Archaeological Museum, Crete"
-                },
-                {
-                    question: "在古代奧林匹克運動會中，獲勝者並沒有金牌。請問，當時希臘官方會為獲勝的運動員戴上何種由神聖植物編織而成的無上榮譽頭冠？ / In the ancient Olympic Games, what crown made from a sacred plant was awarded to victors as the ultimate honor?",
-                    options: ["野橄欖枝葉編成的「橄欖冠」 / A crown of wild olive leaves (Kotinos)", "月桂樹葉編成的「桂冠」 / A crown of laurel leaves (Laurel Wreath)", "橡樹葉與金箔組成的「橡冠」 / A crown of golden oak leaves", "野芹菜葉編成的「芹冠」 / A crown of wild celery leaves"],
-                    correctIndex: 0,
-                    explanation: "古代奧運會唯一的獎品是用奧林匹亞宙斯神廟旁神聖野橄欖樹枝編織成的頭冠（Kotinos）。它象徵著絕對的精神榮譽、和平以及眾神的保佑。 / The victor of the ancient Olympics received an olive wreath, cut from a sacred wild olive tree at Olympia by a boy using a golden sickle. This crown represented peerless virtue.",
-                    source: "國際奧林匹克委員會官方歷史存檔 / International Olympic Committee (IOC)"
-                },
-                {
-                    question: "馬其頓王國的「亞歷山大大帝」（Alexander the Great）在短短十餘年間征服了跨越歐亞非的龐大帝國。請問在他少年時期，他的父親特地聘請了哪一位古希臘最偉大的哲學家擔任他的私人導師？ / Who was the legendary ancient Greek philosopher hired to tutor the young Alexander the Great?",
-                    options: ["蘇格拉底 / Socrates", "柏拉圖 / Plato", "亞里斯多德 / Aristotle", "畢達哥拉斯 / Pythagoras"],
-                    correctIndex: 2,
-                    explanation: "西元前343年，馬其頓國王腓力二世聘請大哲學家亞里斯多德（Aristotle）指導13歲的亞歷山大。亞里斯多德傳授了他哲學、科學、醫學與地理學知識，對亞歷山大的一生產生了極其深遠的影響。 / Aristotle tutored the young prince Alexander in Mieza. Alexander carried Aristotle's annotated copy of Homer's Iliad throughout all his military campaigns.",
-                    source: "希臘亞里斯多德大學歷史研究學部 / Aristotle University of Thessaloniki"
-                },
-                {
-                    question: "希臘國旗由藍白相間的九條水平條紋組成，左上角為白十字。請問這「九條條紋」在希臘語中，代表了獨立戰爭時期的哪一個標誌性愛國格言的音節數？ / The Greek flag has 9 blue and white stripes. Historically, what do these 9 stripes represent?",
-                    options: ["希臘獨立口號「不自由，毋寧死」的音節數量 / The 9 syllables of the Greek independence motto 'Freedom or Death'", "代表奧林帕斯山居住的九位繆斯女神 / The nine Muses who resided on Mount Olympus", "古希臘最富盛名的九大希臘城邦 / The nine most powerful city-states of ancient Greece", "希臘最主要的九個傳統行政大區 / The nine geographical departments of the nation"],
-                    correctIndex: 0,
-                    explanation: "這九條條紋代表希臘文「Eleftheria i Thanatos」（不自由，毋寧死 / Freedom or Death）這句話的九個音節。藍色象徵希臘天空與湛藍的海洋，白色十字代表希臘東正教信仰。 / The 9 stripes stand for the 9 syllables of the patriotic cry 'E-lef-the-ri-a i Tha-na-tos', meaning 'Freedom or Death', used during the 1821 Greek War of Independence.",
-                    source: "希臘總統府國家象徵說明 / Presidency of the Hellenic Republic"
-                },
-                {
-                    question: "雅典「衛城」（Acropolis）是西方世界最著名的古蹟群。請問在希臘文原意中，「Acropolis」這個單字代表什麼意思？ / The Acropolis of Athens is recognized globally. What does the word 'Acropolis' literally mean in Greek?",
-                    options: ["神聖的殿堂 / Holy Temple of Gods", "高處的城邦（高丘上的城市） / High City (city at the highest point)", "民主的發源地 / Cradle of Democracy", "堅固的白石堡壘 / Impregnable White Stone Fortress"],
-                    correctIndex: 1,
-                    explanation: "Acropolis 由 akron（高處 / 極端）和 polis（城市 / 城邦）組合而成。古希臘城邦多建在高聳的岩石高地上，戰時作為防禦堡壘，平時作為主要神廟的所在地。 / Acropolis is derived from the Greek words 'akron' (highest point) and 'polis' (city). It refers to the fortified citadel located on the flattest high rock overlooking the city.",
-                    source: "雅典衛城博物館官方文獻 / Acropolis Museum, Athens"
-                },
-                {
-                    question: "古希臘誕生了無數科學奠基者。請問，當敘拉古的物理學家阿基米德（Archimedes）在浴缸泡澡發現浮力原理時，他興奮地赤裸身體跑上街頭，大喊的「Eureka!（尤里卡）」在希臘文原意中是什麼意思？ / Archimedes famously shouted 'Eureka!' when he discovered the principle of buoyancy. What does 'Eureka' mean in Greek?",
-                    options: ["「我找到了！」 / 'I have found it!'", "「眾神顯靈了！」 / 'The gods have spoken!'", "「水溢出來了！」 / 'The water overflows!'", "「這太不可思議了！」 / 'This is unbelievable!'"],
-                    correctIndex: 0,
-                    explanation: "Eureka（εὕρηκα）是希臘文動詞 heuriskein（發現）的第一人稱單數完成式，意思就是「我已經發現了它！/我找到了！」。這成為西方科學界發現新突破時的代名詞。 / 'Eureka' is the active perfect indicative first-person singular of the Greek verb 'heurisko', meaning 'to find'. It translates to 'I have found it!'.",
-                    source: "大英百科全書科學史存檔 / Encyclopædia Britannica"
-                },
-                {
-                    question: "希臘北部有一個極為神聖的半島「阿索斯山」（Mount Athos），其上建有20座古老修道院。請問，這處被確立為東正教自治修道院神權共和國的聖地，自中世紀起便強制實行哪一項最嚴格的千年禁令？ / Mount Athos is a semi-autonomous monastic state. Since medieval times, what extremely strict rule has been enforced there?",
-                    options: ["完全禁止女性（乃至一切雌性脊椎動物）進入半島 / Absolute prohibition of females (including female animals) on the peninsula", "所有修士終生必須保持完全的「靜默不語」 / A lifetime vow of absolute silence for all living monks", "半島內全面禁止使用任何金屬製品 / Complete ban on any metallic items and cutlery", "任何人皆不得攜帶任何金書和書寫工具 / Ban on bringing any religious texts or writing materials"],
-                    correctIndex: 0,
-                    explanation: "為了防止修士們受到任何世俗誘惑，阿索斯山於西元1045年由拜占庭皇帝下詔，禁止任何女性進入半島，甚至連大部分雌性家畜亦在禁止之列（貓除外，用來捕鼠）。 / To ensure spiritual celibacy, a decree enacted in 1045 bans females of any species from entering. Only men with special permits (diamonitirion) may visit Athos.",
-                    source: "阿索斯山自治修道院議會 / Holy Community of Mount Athos"
-                },
-                {
-                    question: "希臘著名的傳統美食「蘇夫拉奇」（Souvlaki），是風靡世界的街頭美食。請問這道经典美味在烹飪上指的是什麼？ / What is the traditional Greek dish 'Souvlaki' made of?",
-                    options: ["插在竹籤或鐵籤上烤製的香料肉串 / Skewered grilled meat kebabs seasoned with herbs", "經過長時間慢烤的完整小羊腿 / Long slow-roasted whole leg of lamb", "用葡萄葉包裹米飯與香料烹煮的菜捲 / Rice wrapped and cooked in tender grape leaves", "在石窯中烤製的厚底羊乳酪披薩 / Thick-crust pizza topped with baked goat cheese"],
-                    correctIndex: 0,
-                    explanation: "Souvlaki 在希臘文的原意為「小串（鐵籤）」。它是將切成小塊的豬肉、雞肉或羊肉用檸檬汁、橄欖油與牛至香料醃製，串在籤子上炭烤，通常與皮塔餅（Pita）一同食用。 / Souvlaki is a popular Greek fast food consisting of small pieces of meat grilled on a skewer. It is traditionally served wrapped in pita bread with tzatziki, tomatoes, and onions.",
-                    source: "希臘美食保存委員會 / Gastronomy Association of Greece"
-                }
-            ]
+        // 你的 GitHub Gist Raw JSON 連結
+        const GIST_URL = "https://gist.githubusercontent.com/kcmlin/98cf89084fc1cae512cb753f8d6668f2/raw/8fb51c8d916a233fb6febddccc8767853188262e/trivia_db.json";
+
+        // 全域快取，避免重複對網路進行 fetch 請求
+        let cachedDatabase = null;
+
+        // 實時國旗對應數據庫 / Comprehensive Flag Dictionary
+        const countryFlags = {
+            '台灣': '🇹🇼', 'taiwan': '🇹🇼',
+            '瑞士': '🇨🇭', 'switzerland': '🇨🇭',
+            '義大利': '🇮🇹', 'italy': '🇮🇹',
+            '墨西哥': '🇲🇽', 'mexico': '🇲🇽',
+            '希臘': '🇬🇷', 'greece': '🇬🇷',
+            '日本': '🇯🇵', 'japan': '🇯🇵',
+            '埃及': '🇪🇬', 'egypt': '🇪🇬',
+            '法國': '🇫🇷', 'france': '🇫🇷',
+            '美國': '🇺🇸', 'usa': '🇺🇸', 'united states': '🇺🇸',
+            '不丹': '🇧🇹', 'bhutan': '🇧🇹',
+            '冰島': '🇮🇸', 'iceland': '🇮🇸',
+            '英國': '🇬🇧', 'united kingdom': '🇬🇧', 'uk': '🇬🇧',
+            '德國': '🇩🇪', 'germany': '🇩🇪',
+            '韓國': '🇰🇷', 'south korea': '🇰🇷', 'korea': '🇰🇷',
+            '中國': '🇨🇳', 'china': '🇨🇳',
+            '加拿大': '🇨🇦', 'canada': '🇨🇦',
+            '澳洲': '🇦🇺', '澳大利亞': '🇦🇺', 'australia': '🇦🇺',
+            '巴西': '🇧🇷', 'brazil': '🇧🇷',
+            '西班牙': '🇪🇸', 'spain': '🇪🇸',
+            '新加坡': '🇸🇬', 'singapore': '🇸🇬',
+            '泰國': '🇹🇭', 'thailand': '🇹🇭',
+            '印度': '🇮🇳', 'india': '🇮🇳',
+            '荷蘭': '🇳🇱', 'netherlands': '🇳🇱',
+            '越南': '🇻🇳', 'vietnam': '🇻🇳',
+            '紐西蘭': '🇳🇿', 'new zealand': '🇳🇿',
+            '南非': '🇿🇦', 'south africa': '🇿🇦'
         };
 
         // 系統狀態變數
@@ -1219,11 +542,21 @@
             score: 0,
             streak: 0,
             highStreak: 0,
-            conqueredCountries: {}, // 格式範例：{ '台灣': { total: 1, correct: 1 } }
+            conqueredCountries: {}, // 格式：{ '台灣': { total: 1, correct: 1 } }
             soundEnabled: true,
-            // 升級版：動態防重複隨機選題佇列
-            activeQueues: {} // 格式為 { '台灣': [3, 14, 5, 0...] } 
+            activeQueues: {} // 隨機防重佇列
         };
+
+        // 雙語載入提示輪播句 (純本地載入)
+        const loadingHints = [
+            "正在翻閱大英百科全書與地方誌... / Browsing encyclopedias and local archives...",
+            "正在向當地的村長長老打聽鄉野秘辛... / Gathering deep historical anecdotes from village elders...",
+            "正在核對聯合國教科文組織世界遺產文獻... / Verification with UNESCO World Heritage lists...",
+            "正在當地的傳統美食街尋找獨特食譜... / Inspecting regional ingredients and ancient cookbooks...",
+            "正在用衛星定位量測地理極點... / Pinpointing geographical landmarks and coordinates...",
+            "正在利用 Google 搜尋查證該國最近的歷史與文獻紀錄... / Verification using Google Search facts..."
+        ];
+        let loadingInterval;
 
         // 頁面初次載入
         document.addEventListener('DOMContentLoaded', () => {
@@ -1232,17 +565,18 @@
             updateStatsUI();
         });
 
-        // 輔助函式：Fisher-Yates 陣列隨機洗牌演算法
-        function shuffleArray(array) {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+        // 國旗實時解析引擎 / Real-time Flag Resolver
+        function getCountryEmoji(countryName) {
+            const clean = countryName.trim().toLowerCase();
+            for (const [key, emoji] of Object.entries(countryFlags)) {
+                if (clean.includes(key) || key.includes(clean)) {
+                    return emoji;
+                }
             }
-            return arr;
+            return '🏳️'; // 未識別國家時的 fallback
         }
 
-        // 聲音控制
+        // 聲音控制（利用 Web Audio API 原生音訊合成器發聲）
         function toggleSound() {
             state.soundEnabled = !state.soundEnabled;
             const container = document.getElementById('sound-icon-container');
@@ -1302,6 +636,16 @@
             }
         }
 
+        // 輔助函式：Fisher-Yates 陣列隨機洗牌演算法
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
         // 難度選擇
         function setDifficulty(level) {
             playSynthSound('click');
@@ -1348,7 +692,18 @@
             }
         }
 
-        // 航行載入模擬與本機資料庫提取
+        // 異非同步拉取 Gist 題庫數據 (含記憶體快取設計)
+        async function fetchDatabase() {
+            if (cachedDatabase) return cachedDatabase;
+            const response = await fetch(GIST_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            cachedDatabase = await response.json();
+            return cachedDatabase;
+        }
+
+        // 航行載入模擬與雲端資料庫/Fallback處理
         function startTrivia(countryName) {
             state.currentCountry = countryName;
             state.currentCategory = document.getElementById('category-select').value;
@@ -1364,65 +719,73 @@
                 document.getElementById('loading-hint').innerText = loadingHints[hintIdx];
             }, 550);
 
-            // 1.2 秒模擬後提取題目 (使用防禦型 Try-Catch 保護)
-            setTimeout(() => {
+            // 1.2 秒後提取題目 (使用防禦型 Try-Catch 保證不卡死)
+            setTimeout(async () => {
                 try {
                     clearInterval(loadingInterval);
-                    const trivia = getLocalTrivia(countryName);
+                    const trivia = await getTriviaData(countryName);
                     if (!trivia) {
                         throw new Error("無法取得該國家的問答數據 / Failed to retrieve trivia data.");
                     }
                     state.currentQuestion = trivia;
                     
-                    // 利用對照表，全自動動態解析並傳入該國家的正確國旗
+                    // 解析正確國旗並渲染遊戲
                     const countryEmoji = getCountryEmoji(countryName);
                     displayGame(countryEmoji);
                 } catch (err) {
                     clearInterval(loadingInterval);
-                    console.error("載入出錯：", err);
-                    switchView('view-home');
-                    showModal("載入錯誤 / Loading Error", "擷取該國家的問答題目時發生異常，已為您自動返回主頁。 / An unexpected error occurred. Returned to home screen.<br><br>錯誤詳情 / Details: " + err.message);
+                    console.error("載入出錯，降級為自適應 fallback：", err);
+                    
+                    // 當網路異常或發生錯誤時，優雅降級為自適應 fallback 題目，防止卡死
+                    state.currentQuestion = getFallbackTrivia(countryName);
+                    const countryEmoji = getCountryEmoji(countryName);
+                    displayGame(countryEmoji);
                 }
             }, 1200);
         }
 
-        // 本機知識尋找器 (支援 20 題 Fisher-Yates 排重機制 + 自適應 Fallback)
-        function getLocalTrivia(country) {
+        // 遠端拉取題庫 (支援 20 題防重機制)
+        async function getTriviaData(country) {
+            const db = await fetchDatabase();
             const cleanKey = country.trim().toLowerCase();
             
-            // 嘗試與資料庫鍵值匹配
+            // 模糊比對
             let matchedKey = null;
-            for (const key of Object.keys(localDatabase)) {
+            for (const key of Object.keys(db)) {
                 if (cleanKey.includes(key.toLowerCase()) || key.toLowerCase().includes(cleanKey)) {
                     matchedKey = key;
                     break;
                 }
             }
 
-            // 安全防禦：若排重佇列結構未初始化，重新補齊
+            // 排重佇列初始化
             if (!state.activeQueues) {
                 state.activeQueues = {};
             }
 
-            if (matchedKey && localDatabase[matchedKey]) {
-                const questionPool = localDatabase[matchedKey];
+            if (matchedKey && db[matchedKey]) {
+                const questionPool = db[matchedKey];
                 
-                // 若此國家尚未建立亂數排重隊列，或隊列已抽空，立即建立新的一輪洗牌隊列
+                // 若為新選定國家，或 20 題庫抽空，建立隨機亂數索引排重佇列
                 if (!state.activeQueues[matchedKey] || state.activeQueues[matchedKey].length === 0) {
                     const freshIndices = Array.from({ length: questionPool.length }, (_, i) => i);
                     state.activeQueues[matchedKey] = shuffleArray(freshIndices);
                 }
                 
-                // 從洗好的隊列中 pop 出一個不重複的索引
+                // pop 出唯一不重複的題目
                 const nextIdx = state.activeQueues[matchedKey].pop();
-                
                 return questionPool[nextIdx];
             }
 
-            // 自適應 Fallback 引擎 (確保 custom 國家 correctIndex 完整對照)
+            // 若非內置的 5 個國家，切換至地理天文 Fallback 引擎
+            return getFallbackTrivia(country);
+        }
+
+        // 萬用自適應 Fallback 生物地理題庫引擎
+        function getFallbackTrivia(country) {
             const fallbackTemplates = [
                 {
-                    question: `每個國家的地理位置都有其獨特性。如果你從「\${country}」沿著地球球體經度直線一直向南前進（不拐彎），你最終必定會抵達地球的哪一個寒冷邊疆？ / Every country's geography is unique. If you travel directly South along the longitude line from '\${country}', which cold frontier of the Earth will you eventually reach?`,
+                    question: `每個國家的地理位置都有其獨特性。如果你從「\${country}」沿著地球球體經度直線一直向南前進（不轉彎），你最終必定會抵達地球的哪一個寒冷邊疆？ / Every country's geography is unique. If you travel directly South along the longitude line from '\${country}', which cold frontier of the Earth will you eventually reach?`,
                     options: [
                         "北極冰蓋地區 / The Arctic Ice Cap",
                         "西伯利亞泰加林 / Siberian Taiga Forests",
@@ -1448,7 +811,6 @@
             ];
 
             const selectedTemplate = fallbackTemplates[country.length % fallbackTemplates.length];
-            
             return {
                 question: selectedTemplate.question.replace(/\${country}/g, country),
                 options: selectedTemplate.options,
@@ -1658,13 +1020,13 @@
                     highStreak: state.highStreak,
                     conqueredCountries: state.conqueredCountries
                 };
-                localStorage.setItem('trivia_explorer_offline_progress_v4', JSON.stringify(gameProgress));
+                localStorage.setItem('trivia_explorer_online_progress_v4', JSON.stringify(gameProgress));
             } catch (e) {}
         }
 
         function loadProgress() {
             try {
-                const saved = localStorage.getItem('trivia_explorer_offline_progress_v4');
+                const saved = localStorage.getItem('trivia_explorer_online_progress_v4');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     state.score = parsed.score || 0;
@@ -1759,7 +1121,6 @@
             document.getElementById('custom-modal').classList.add('hidden');
         }
 
-        // ----------------- 運作原理說明彈窗 -----------------
         function showInfoModal(e) {
             if (e) e.preventDefault();
             playSynthSound('click');
