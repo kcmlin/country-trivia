@@ -498,6 +498,37 @@
         // 你的 GitHub Gist Raw JSON 連結
         const GIST_URL = "https://gist.githubusercontent.com/kcmlin/98cf89084fc1cae512cb753f8d6668f2/raw/d47422ee56b444778c6eb05b20a644f4f3766697/trivia_db.json";
 
+        // 增加別名對照表，解決 "greece" 對應不到 "希臘" 的問題
+        const countryAliases = {
+            'greece': '希臘',      'Greece': '希臘', 
+            'taiwan': '台灣',      'Taiwan': '台灣', 
+            'switzerland': '瑞士', 'Switzerland': '瑞士', 
+            'italy': '義大利',     'Italy': '義大利', 
+            'mexico': '墨西哥',    'Mexico': '墨西哥', 
+            'japan': '日本',       'Japan': '日本', 
+            'egypt': '埃及',       'Egypt': '埃及'
+        };
+
+        async function getTriviaData(country) {
+            const response = await fetch(GIST_URL);
+            const db = await response.json();
+            const input = country.trim().toLowerCase();
+            const normalized = countryAliases[input] || input;
+
+            let matchedKey = null;
+            for (const key of Object.keys(db)) {
+                if (normalized.includes(key) || key.includes(normalized)) {
+                    matchedKey = key;
+                    break;
+                }
+            }
+            
+            if (matchedKey && db[matchedKey]) {
+                return db[matchedKey][Math.floor(Math.random() * db[matchedKey].length)];
+            }
+            return null; // 若找不到，後續交由 Fallback 處理
+        }
+        
         // 全域快取，避免重複對網路進行 fetch 請求
         let cachedDatabase = null;
 
